@@ -12,5 +12,5 @@ function initHomePage() {
 
 function handleCategoryClick(card) {
   const category = card.dataset.category;
-  window.location.href = `questPageTrivia.html?category=${category}`;
+  window.location.href = `subCategoryPage.html?category=${category}`;
 }

@@ -1,0 +1,127 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.sub-screen {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(to bottom, #2b0000, #990000);
+  padding: 24px 20px 40px;
+}
+
+.sub-header {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #ffffff;
+}
+
+.back-button {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.sub-header__title {
+  flex: 1;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.sub-header__spacer {
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.sub-screen__hint {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.sub-category-grid {
+  width: 100%;
+  max-width: 760px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.sub-category-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: right;
+  border: none;
+  border-radius: 20px;
+  padding: 18px 20px;
+  cursor: pointer;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sub-category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+}
+
+.sub-category-card:active {
+  transform: translateY(-1px);
+}
+
+.sub-category-card--purple {
+  background: #6b35e8;
+}
+
+.sub-category-card--teal {
+  background: #1a8c9e;
+}
+
+.sub-category-card--orange {
+  background: #d95330;
+}
+
+.sub-category-card--green {
+  background: #2d8a4e;
+}
+
+.sub-category-card__title {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.sub-category-card__tag {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}

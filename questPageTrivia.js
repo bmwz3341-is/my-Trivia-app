@@ -1,12 +1,19 @@
 let CATEGORY_DATA = {};
 
+const QUESTION_TIME = 25;
+const WARNING_TIME = 10;
+
 let state = {
   category: 'general-trivia',
+  subCategory: '',
   questions: [],
   currentIndex: 0,
   score: 0,
   answered: false,
 };
+
+let timerInterval = null;
+let timeLeft = QUESTION_TIME;
 
 document.addEventListener('DOMContentLoaded', () => {
   initQuestPage();
@@ -18,12 +25,22 @@ async function initQuestPage() {
 
   const params = new URLSearchParams(window.location.search);
   const category = params.get('category');
-  state.category = CATEGORY_DATA[category] ? category : 'general-trivia';
-  state.questions = CATEGORY_DATA[state.category].questions;
+  const subCategory = params.get('sub');
+  const categoryData = CATEGORY_DATA[category];
+  const subCategoryData = categoryData ? categoryData.subcategories[subCategory] : null;
 
-  document.getElementById('categoryTitle').textContent = CATEGORY_DATA[state.category].title;
-  document.getElementById('backButton').addEventListener('click', () => {
+  if (!categoryData || !subCategoryData) {
     window.location.href = 'index.html';
+    return;
+  }
+
+  state.category = category;
+  state.subCategory = subCategory;
+  state.questions = subCategoryData.questions;
+
+  document.getElementById('categoryTitle').textContent = subCategoryData.title;
+  document.getElementById('backButton').addEventListener('click', () => {
+    window.location.href = `subCategoryPage.html?category=${state.category}`;
   });
   document.getElementById('nextButton').addEventListener('click', handleNextClick);
   document.getElementById('restartButton').addEventListener('click', restartQuiz);
@@ -57,11 +74,48 @@ function renderQuestion() {
   });
 
   document.getElementById('nextButton').disabled = true;
+
+  startTimer();
+}
+
+function startTimer() {
+  stopTimer();
+  timeLeft = QUESTION_TIME;
+  updateTimerDisplay();
+
+  timerInterval = setInterval(() => {
+    timeLeft -= 1;
+    updateTimerDisplay();
+
+    if (timeLeft <= 0) {
+      stopTimer();
+      handleTimeOut();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function updateTimerDisplay() {
+  document.getElementById('timerBadge').textContent = timeLeft;
+  document.getElementById('timerCard').classList.toggle('timer-card--warning', timeLeft <= WARNING_TIME && timeLeft > 0);
+}
+
+function handleTimeOut() {
+  if (state.answered) return;
+  handleAnswerClick(-1, null);
+  setTimeout(handleNextClick, 1500);
 }
 
 function handleAnswerClick(selectedIndex, button) {
   if (state.answered) return;
   state.answered = true;
+  stopTimer();
 
   const question = state.questions[state.currentIndex];
   const buttons = document.querySelectorAll('.answer-button');
@@ -86,6 +140,7 @@ function handleAnswerClick(selectedIndex, button) {
 }
 
 function handleNextClick() {
+  stopTimer();
   const total = state.questions.length;
   if (state.currentIndex < total - 1) {
     state.currentIndex += 1;
