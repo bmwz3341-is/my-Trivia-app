@@ -1,7 +1,15 @@
 let CATEGORY_DATA = {};
 
-const QUESTION_TIME = 25;
+const QUESTION_TIME = 20;
 const WARNING_TIME = 10;
+const GLOBAL_TIME = 90;
+
+const SCORE_TIERS = [
+  { maxElapsed: 4, points: 15 },
+  { maxElapsed: 8, points: 12 },
+  { maxElapsed: 14, points: 10 },
+  { maxElapsed: 20, points: 7 },
+];
 
 let state = {
   category: 'general-trivia',
@@ -14,6 +22,12 @@ let state = {
 
 let timerInterval = null;
 let timeLeft = QUESTION_TIME;
+
+let globalTimerInterval = null;
+let globalTimeLeft = GLOBAL_TIME;
+
+let advanceTimeout = null;
+let renderId = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
   initQuestPage();
@@ -42,17 +56,32 @@ async function initQuestPage() {
   document.getElementById('backButton').addEventListener('click', () => {
     window.location.href = `subCategoryPage.html?category=${state.category}`;
   });
-  document.getElementById('nextButton').addEventListener('click', handleNextClick);
   document.getElementById('restartButton').addEventListener('click', restartQuiz);
   document.getElementById('homeButton').addEventListener('click', () => {
     window.location.href = 'index.html';
   });
 
+  const scoreInfoOverlay = document.getElementById('scoreInfoOverlay');
+  document.getElementById('scoreInfoButton').addEventListener('click', () => {
+    scoreInfoOverlay.hidden = false;
+  });
+  document.getElementById('scoreInfoCloseButton').addEventListener('click', () => {
+    scoreInfoOverlay.hidden = true;
+  });
+  scoreInfoOverlay.addEventListener('click', (event) => {
+    if (event.target === scoreInfoOverlay) {
+      scoreInfoOverlay.hidden = true;
+    }
+  });
+
+  startGlobalTimer();
   renderQuestion();
 }
 
 function renderQuestion() {
   state.answered = false;
+  renderId += 1;
+  const currentRenderId = renderId;
   const question = state.questions[state.currentIndex];
   const total = state.questions.length;
 
@@ -69,11 +98,9 @@ function renderQuestion() {
     button.type = 'button';
     button.className = 'answer-button';
     button.innerHTML = `<span>${optionText}</span><span class="answer-button__icon"></span>`;
-    button.addEventListener('click', () => handleAnswerClick(index, button));
+    button.addEventListener('click', () => handleAnswerClick(index, button, currentRenderId));
     answersGrid.appendChild(button);
   });
-
-  document.getElementById('nextButton').disabled = true;
 
   startTimer();
 }
@@ -108,11 +135,48 @@ function updateTimerDisplay() {
 
 function handleTimeOut() {
   if (state.answered) return;
-  handleAnswerClick(-1, null);
-  setTimeout(handleNextClick, 1500);
+  handleAnswerClick(-1, null, renderId);
 }
 
-function handleAnswerClick(selectedIndex, button) {
+function startGlobalTimer() {
+  stopGlobalTimer();
+  globalTimeLeft = GLOBAL_TIME;
+  updateGlobalTimerDisplay();
+
+  globalTimerInterval = setInterval(() => {
+    globalTimeLeft -= 1;
+    updateGlobalTimerDisplay();
+
+    if (globalTimeLeft <= 0) {
+      stopGlobalTimer();
+      handleGlobalTimeOut();
+    }
+  }, 1000);
+}
+
+function stopGlobalTimer() {
+  if (globalTimerInterval) {
+    clearInterval(globalTimerInterval);
+    globalTimerInterval = null;
+  }
+}
+
+function updateGlobalTimerDisplay() {
+  document.getElementById('globalTimerBadge').textContent = globalTimeLeft;
+}
+
+function handleGlobalTimeOut() {
+  stopTimer();
+  if (advanceTimeout) {
+    clearTimeout(advanceTimeout);
+    advanceTimeout = null;
+  }
+  state.answered = true;
+  showResultScreen(true);
+}
+
+function handleAnswerClick(selectedIndex, button, clickRenderId) {
+  if (clickRenderId !== renderId) return;
   if (state.answered) return;
   state.answered = true;
   stopTimer();
@@ -132,11 +196,13 @@ function handleAnswerClick(selectedIndex, button) {
   });
 
   if (selectedIndex === question.correct) {
-    state.score += 10;
+    const elapsed = QUESTION_TIME - timeLeft;
+    const tier = SCORE_TIERS.find(t => elapsed <= t.maxElapsed);
+    state.score += tier ? tier.points : 0;
     document.getElementById('scoreBadge').textContent = `${state.score} נק'`;
   }
 
-  document.getElementById('nextButton').disabled = false;
+  advanceTimeout = setTimeout(handleNextClick, 1500);
 }
 
 function handleNextClick() {
@@ -150,16 +216,23 @@ function handleNextClick() {
   }
 }
 
-function showResultScreen() {
-  document.getElementById('progressFill').style.width = '100%';
+function showResultScreen(timedOut = false) {
+  stopTimer();
+  stopGlobalTimer();
+
+  if (!timedOut) {
+    document.getElementById('progressFill').style.width = '100%';
+  }
   document.getElementById('questionCard').hidden = true;
   document.getElementById('answersGrid').hidden = true;
-  document.getElementById('nextButton').hidden = true;
 
   const resultScreen = document.getElementById('resultScreen');
   resultScreen.hidden = false;
-  document.getElementById('resultScore').textContent =
-    `הצלחתם! צברתם ${state.score} נקודות מתוך ${state.questions.length * 10}`;
+  document.getElementById('resultTitle').textContent = timedOut ? 'הזמן נגמר!' : 'סיימתם!';
+  const maxScore = state.questions.length * SCORE_TIERS[0].points;
+  document.getElementById('resultScore').textContent = timedOut
+    ? `נגמר הזמן! הספקתם לצבור ${state.score} נקודות מתוך ${maxScore}`
+    : `הצלחתם! צברתם ${state.score} נקודות מתוך ${maxScore}`;
 }
 
 function restartQuiz() {
@@ -168,8 +241,8 @@ function restartQuiz() {
 
   document.getElementById('questionCard').hidden = false;
   document.getElementById('answersGrid').hidden = false;
-  document.getElementById('nextButton').hidden = false;
   document.getElementById('resultScreen').hidden = true;
 
+  startGlobalTimer();
   renderQuestion();
 }

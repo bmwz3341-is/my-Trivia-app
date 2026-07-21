@@ -15,17 +15,23 @@
         <h2 id="categoryTitle" class="category-title">טריוויה</h2>
         <span id="questionCounter" class="question-counter">שאלה 1 מתוך 8</span>
       </div>
-      <div id="timerCard" class="timer-card">
-        <svg class="timer-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="2"/>
-          <path d="M12 9v4l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M12 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <span id="timerBadge" class="timer-card__number">25</span>
+      <div class="header-score-group">
+        <span id="scoreBadge" class="score-badge">0 נק'</span>
+        <button id="scoreInfoButton" class="score-info-button" type="button" aria-label="איך עובד הניקוד?">?</button>
       </div>
-      <span id="scoreBadge" class="score-badge">0 נק'</span>
     </header>
+
+    <div class="timers-row">
+      <div id="globalTimerCard" class="timer-card timer-card--global">
+        <svg class="timer-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7 3h10M7 21h10M8 3c0 4 3 5 4 6-1 1-4 2-4 6M16 3c0 4-3 5-4 6 1 1 4 2 4 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="timer-card__text">
+          <span class="timer-card__label">זמן כולל</span>
+          <span id="globalTimerBadge" class="timer-card__number">90</span>
+        </div>
+      </div>
+    </div>
 
     <div class="progress-track">
       <div id="progressFill" class="progress-fill"></div>
@@ -33,18 +39,57 @@
 
     <section id="questionCard" class="question-card">
       <p id="questionText" class="question-text">טוען שאלה...</p>
+      <div id="timerCard" class="timer-card timer-card--question">
+        <svg class="timer-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 9v4l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="timer-card__text">
+          <span class="timer-card__label">לשאלה</span>
+          <span id="timerBadge" class="timer-card__number">20</span>
+        </div>
+      </div>
     </section>
 
     <section id="answersGrid" class="answers-grid"></section>
 
-    <button id="nextButton" class="next-button" type="button" disabled>השאלה הבאה</button>
-
     <section id="resultScreen" class="result-screen" hidden>
-      <h2 class="result-title">סיימתם!</h2>
+      <h2 id="resultTitle" class="result-title">סיימתם!</h2>
       <p id="resultScore" class="result-score"></p>
       <button id="restartButton" class="result-button" type="button">שחקו שוב</button>
       <button id="homeButton" class="result-button result-button--ghost" type="button">חזרה למסך הבית</button>
     </section>
+
+    <div id="scoreInfoOverlay" class="modal-overlay" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="scoreInfoTitle">
+        <h3 id="scoreInfoTitle" class="modal__title">איך עובד הניקוד?</h3>
+        <ul class="score-info-list">
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">⚡ 0–4 שניות (מהיר במיוחד)</span>
+            <span class="score-info-list__points">15 נק'</span>
+          </li>
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">🚀 5–8 שניות (מהיר)</span>
+            <span class="score-info-list__points">12 נק'</span>
+          </li>
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">👍 9–14 שניות (רגיל)</span>
+            <span class="score-info-list__points">10 נק'</span>
+          </li>
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">⏳ 15–20 שניות (איטי / אזור ההבהוב)</span>
+            <span class="score-info-list__points">7 נק'</span>
+          </li>
+          <li class="score-info-list__item score-info-list__item--zero">
+            <span class="score-info-list__label">❌ תשובה שגויה / נגמר הזמן</span>
+            <span class="score-info-list__points">0 נק'</span>
+          </li>
+        </ul>
+        <button id="scoreInfoCloseButton" class="modal-close-button" type="button">הבנתי!</button>
+      </div>
+    </div>
   </main>
 
   <script src="questPageTrivia.js"></script>
