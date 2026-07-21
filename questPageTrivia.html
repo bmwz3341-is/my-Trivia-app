@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טריוויה - שאלות</title>
+  <link rel="stylesheet" href="questPageTrivia.css">
+</head>
+<body>
+
+  <main class="quest-screen">
+    <header class="quest-header">
+      <button id="backButton" class="back-button" type="button" aria-label="חזרה">→</button>
+      <div class="quest-header__info">
+        <h2 id="categoryTitle" class="category-title">טריוויה</h2>
+        <span id="questionCounter" class="question-counter">שאלה 1 מתוך 8</span>
+      </div>
+      <span id="scoreBadge" class="score-badge">0 נק'</span>
+    </header>
+
+    <div class="progress-track">
+      <div id="progressFill" class="progress-fill"></div>
+    </div>
+
+    <section id="questionCard" class="question-card">
+      <p id="questionText" class="question-text">טוען שאלה...</p>
+    </section>
+
+    <section id="answersGrid" class="answers-grid"></section>
+
+    <button id="nextButton" class="next-button" type="button" disabled>השאלה הבאה</button>
+
+    <section id="resultScreen" class="result-screen" hidden>
+      <h2 class="result-title">סיימתם!</h2>
+      <p id="resultScore" class="result-score"></p>
+      <button id="restartButton" class="result-button" type="button">שחקו שוב</button>
+      <button id="homeButton" class="result-button result-button--ghost" type="button">חזרה למסך הבית</button>
+    </section>
+  </main>
+
+  <script src="questPageTrivia.js"></script>
+</body>
+</html>

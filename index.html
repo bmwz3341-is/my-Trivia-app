@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טריוויה - מסך הבית</title>
+  <link rel="stylesheet" href="HomePageTrivia.css">
+</head>
+<body>
+
+  <main class="home-screen">
+    <h1 class="app-title">Tick Tock Trivia</h1>
+    <p class="app-subtitle">טריוויה שבודקת אתכם באמת: ידע, מהירות ואדרנלין. בחרו קטגוריה והתחילו — כל תשובה מהירה שווה יותר נקודות</p>
+
+    <button id="quickGameButton" class="quick-game-button">
+      <span class="quick-game-title">אתגר מהיר</span>
+      <span class="quick-game-meta">· 8 שאלות</span>
+    </button>
+
+    <button id="vsPlayerButton" class="vs-player-button" type="button" disabled>
+      <span>קרב מול משתמש</span>
+      <span class="vs-player-meta">· בקרוב</span>
+    </button>
+
+    <section class="category-grid">
+      <button class="category-card category-card--purple" data-category="general-trivia" type="button">
+        <h3 class="category-card__title">ידע כללי וטריוויה של פאבים</h3>
+        <p class="category-card__subtitle">מדע • טכנולוגיה • ספרות • אמנות</p>
+        <div class="category-card__footer">
+          <span class="category-card__tag">8 שאלות</span>
+          <div class="category-card__difficulty">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </button>
+
+      <button class="category-card category-card--teal" data-category="current-events" type="button">
+        <h3 class="category-card__title">אקטואליה ועולם</h3>
+        <p class="category-card__subtitle">גאוגרפיה • פוליטיקה עולמית • אירועים היסטוריים</p>
+        <div class="category-card__footer">
+          <span class="category-card__tag">8 שאלות</span>
+          <div class="category-card__difficulty">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </button>
+
+      <button class="category-card category-card--orange" data-category="pop-culture" type="button">
+        <h3 class="category-card__title">תרבות פופ ונוסטלגיה</h3>
+        <p class="category-card__subtitle">כדורגל מונדיאל • סרטים וסדרות 80/90 • מוזיקה</p>
+        <div class="category-card__footer">
+          <span class="category-card__tag">8 שאלות</span>
+          <div class="category-card__difficulty">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </button>
+
+      <button class="category-card category-card--green" data-category="lifestyle-brands" type="button">
+        <h3 class="category-card__title">מותגי לייף-סטייל</h3>
+        <p class="category-card__subtitle">אוכל • יין • רכב • אופנה</p>
+        <div class="category-card__footer">
+          <span class="category-card__tag">8 שאלות</span>
+          <div class="category-card__difficulty">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </button>
+    </section>
+  </main>
+
+  <script src="HomePageTrivia.js"></script>
+</body>
+</html>
