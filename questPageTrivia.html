@@ -13,7 +13,6 @@
       <button id="backButton" class="back-button" type="button" aria-label="חזרה">→</button>
       <div class="quest-header__info">
         <h2 id="categoryTitle" class="category-title">טריוויה</h2>
-        <span id="questionCounter" class="question-counter">שאלה 1 מתוך 8</span>
       </div>
       <div class="header-score-group">
         <span id="scoreBadge" class="score-badge">0 נק'</span>
@@ -21,15 +20,20 @@
       </div>
     </header>
 
-    <div class="timers-row">
-      <div id="globalTimerCard" class="timer-card timer-card--global">
-        <svg class="timer-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M7 3h10M7 21h10M8 3c0 4 3 5 4 6-1 1-4 2-4 6M16 3c0 4-3 5-4 6 1 1 4 2 4 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div class="timer-card__text">
-          <span class="timer-card__label">זמן כולל</span>
-          <span id="globalTimerBadge" class="timer-card__number">90</span>
-        </div>
+    <div id="globalTimerCard" class="global-timer">
+      <svg class="global-timer__ring" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="globalTimerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffc93c"/>
+            <stop offset="100%" stop-color="#ffa724"/>
+          </linearGradient>
+        </defs>
+        <circle class="global-timer__ring-bg" cx="50" cy="50" r="42"/>
+        <circle id="globalTimerRing" class="global-timer__ring-progress" cx="50" cy="50" r="42"/>
+      </svg>
+      <div class="global-timer__center">
+        <span id="globalTimerBadge" class="global-timer__time">1:30</span>
+        <span class="global-timer__label">זמן המשחק</span>
       </div>
     </div>
 
@@ -58,6 +62,8 @@
     <section id="resultScreen" class="result-screen" hidden>
       <h2 id="resultTitle" class="result-title">סיימתם!</h2>
       <p id="resultScore" class="result-score"></p>
+      <p id="resultAccuracy" class="result-accuracy"></p>
+      <ul id="resultHistoryList" class="result-history-list"></ul>
       <button id="restartButton" class="result-button" type="button">שחקו שוב</button>
       <button id="homeButton" class="result-button result-button--ghost" type="button">חזרה למסך הבית</button>
     </section>
@@ -79,7 +85,7 @@
             <span class="score-info-list__points">10 נק'</span>
           </li>
           <li class="score-info-list__item">
-            <span class="score-info-list__label">⏳ 15–20 שניות (איטי / אזור ההבהוב)</span>
+            <span class="score-info-list__label">⏳ 15–20 שניות (איטי)</span>
             <span class="score-info-list__points">7 נק'</span>
           </li>
           <li class="score-info-list__item score-info-list__item--zero">

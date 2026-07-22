@@ -3,6 +3,8 @@ let CATEGORY_DATA = {};
 const QUESTION_TIME = 20;
 const WARNING_TIME = 10;
 const GLOBAL_TIME = 90;
+const GLOBAL_WARNING_TIME = 15;
+const GLOBAL_RING_CIRCUMFERENCE = 2 * Math.PI * 42;
 
 const SCORE_TIERS = [
   { maxElapsed: 4, points: 15 },
@@ -18,6 +20,9 @@ let state = {
   currentIndex: 0,
   score: 0,
   answered: false,
+  answeredCount: 0,
+  remainingQueue: [],
+  history: [],
 };
 
 let timerInterval = null;
@@ -28,6 +33,10 @@ let globalTimeLeft = GLOBAL_TIME;
 
 let advanceTimeout = null;
 let renderId = 0;
+
+let questionStartedAt = 0;
+let pausedAt = null;
+let pausedDurationMs = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
   initQuestPage();
@@ -51,6 +60,9 @@ async function initQuestPage() {
   state.category = category;
   state.subCategory = subCategory;
   state.questions = subCategoryData.questions;
+  state.remainingQueue = loadQuestionQueue();
+  state.history = [];
+  state.currentIndex = pickNextOrResetIndex();
 
   document.getElementById('categoryTitle').textContent = subCategoryData.title;
   document.getElementById('backButton').addEventListener('click', () => {
@@ -64,13 +76,20 @@ async function initQuestPage() {
   const scoreInfoOverlay = document.getElementById('scoreInfoOverlay');
   document.getElementById('scoreInfoButton').addEventListener('click', () => {
     scoreInfoOverlay.hidden = false;
+    pausedAt = Date.now();
+    stopTimer();
+    stopGlobalTimer();
   });
   document.getElementById('scoreInfoCloseButton').addEventListener('click', () => {
     scoreInfoOverlay.hidden = true;
+    unpause();
+    resumeTimers();
   });
   scoreInfoOverlay.addEventListener('click', (event) => {
     if (event.target === scoreInfoOverlay) {
       scoreInfoOverlay.hidden = true;
+      unpause();
+      resumeTimers();
     }
   });
 
@@ -78,25 +97,77 @@ async function initQuestPage() {
   renderQuestion();
 }
 
+function getQueueStorageKey() {
+  return `triviaQueue::${state.category}::${state.subCategory}`;
+}
+
+function shuffledIndices(count) {
+  const arr = Array.from({ length: count }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function loadQuestionQueue() {
+  try {
+    const raw = localStorage.getItem(getQueueStorageKey());
+    const saved = raw ? JSON.parse(raw) : null;
+    if (saved && saved.total === state.questions.length && Array.isArray(saved.queue) && saved.queue.length > 0) {
+      return saved.queue;
+    }
+  } catch (err) {
+    // localStorage unavailable or corrupted; fall back to a fresh shuffle below
+  }
+  return shuffledIndices(state.questions.length);
+}
+
+function saveQuestionQueue() {
+  try {
+    localStorage.setItem(getQueueStorageKey(), JSON.stringify({ total: state.questions.length, queue: state.remainingQueue }));
+  } catch (err) {
+    // ignore storage failures (e.g. private browsing quota)
+  }
+}
+
+function pickNextQuestionIndex() {
+  if (state.remainingQueue.length === 0) return null;
+  const index = state.remainingQueue.shift();
+  saveQuestionQueue();
+  return index;
+}
+
+function pickNextOrResetIndex() {
+  let index = pickNextQuestionIndex();
+  if (index === null) {
+    state.remainingQueue = shuffledIndices(state.questions.length);
+    index = pickNextQuestionIndex();
+  }
+  return index;
+}
+
 function renderQuestion() {
   state.answered = false;
   renderId += 1;
   const currentRenderId = renderId;
   const question = state.questions[state.currentIndex];
-  const total = state.questions.length;
+  const isTrueFalse = question.type === 'true-false';
 
-  document.getElementById('questionCounter').textContent = `שאלה ${state.currentIndex + 1} מתוך ${total}`;
   document.getElementById('scoreBadge').textContent = `${state.score} נק'`;
-  document.getElementById('progressFill').style.width = `${((state.currentIndex) / total) * 100}%`;
   document.getElementById('questionText').textContent = question.text;
 
   const answersGrid = document.getElementById('answersGrid');
   answersGrid.innerHTML = '';
+  answersGrid.classList.toggle('answers-grid--boolean', isTrueFalse);
 
   question.options.forEach((optionText, index) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'answer-button';
+    if (isTrueFalse) {
+      button.classList.add(index === 0 ? 'answer-button--true-option' : 'answer-button--false-option');
+    }
     button.innerHTML = `<span>${optionText}</span><span class="answer-button__icon"></span>`;
     button.addEventListener('click', () => handleAnswerClick(index, button, currentRenderId));
     answersGrid.appendChild(button);
@@ -105,9 +176,24 @@ function renderQuestion() {
   startTimer();
 }
 
-function startTimer() {
+function unpause() {
+  if (pausedAt === null) return;
+  pausedDurationMs += Date.now() - pausedAt;
+  pausedAt = null;
+}
+
+function getElapsedSeconds() {
+  const rawMs = Date.now() - questionStartedAt - pausedDurationMs;
+  return Math.max(0, Math.round(rawMs / 100) / 10);
+}
+
+function startTimer(reset = true) {
   stopTimer();
-  timeLeft = QUESTION_TIME;
+  if (reset) {
+    timeLeft = QUESTION_TIME;
+    questionStartedAt = Date.now();
+    pausedDurationMs = 0;
+  }
   updateTimerDisplay();
 
   timerInterval = setInterval(() => {
@@ -138,9 +224,9 @@ function handleTimeOut() {
   handleAnswerClick(-1, null, renderId);
 }
 
-function startGlobalTimer() {
+function startGlobalTimer(reset = true) {
   stopGlobalTimer();
-  globalTimeLeft = GLOBAL_TIME;
+  if (reset) globalTimeLeft = GLOBAL_TIME;
   updateGlobalTimerDisplay();
 
   globalTimerInterval = setInterval(() => {
@@ -162,7 +248,21 @@ function stopGlobalTimer() {
 }
 
 function updateGlobalTimerDisplay() {
-  document.getElementById('globalTimerBadge').textContent = globalTimeLeft;
+  const minutes = Math.floor(globalTimeLeft / 60);
+  const seconds = globalTimeLeft % 60;
+  document.getElementById('globalTimerBadge').textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+
+  const elapsedRatio = 1 - globalTimeLeft / GLOBAL_TIME;
+  const offset = GLOBAL_RING_CIRCUMFERENCE * elapsedRatio;
+  document.getElementById('globalTimerRing').style.strokeDashoffset = offset;
+  document.getElementById('globalTimerCard').classList.toggle('global-timer--warning', globalTimeLeft <= GLOBAL_WARNING_TIME && globalTimeLeft > 0);
+  document.getElementById('progressFill').style.width = `${elapsedRatio * 100}%`;
+}
+
+function resumeTimers() {
+  if (document.getElementById('resultScreen').hidden === false) return;
+  if (!state.answered) startTimer(false);
+  startGlobalTimer(false);
 }
 
 function handleGlobalTimeOut() {
@@ -172,7 +272,7 @@ function handleGlobalTimeOut() {
     advanceTimeout = null;
   }
   state.answered = true;
-  showResultScreen(true);
+  showResultScreen();
 }
 
 function handleAnswerClick(selectedIndex, button, clickRenderId) {
@@ -195,7 +295,21 @@ function handleAnswerClick(selectedIndex, button, clickRenderId) {
     }
   });
 
-  if (selectedIndex === question.correct) {
+  const timedOut = selectedIndex === -1;
+  const isCorrect = selectedIndex === question.correct;
+
+  if (!timedOut) {
+    state.answeredCount += 1;
+  }
+
+  state.history.push({
+    text: question.text,
+    isCorrect,
+    timedOut,
+    elapsed: getElapsedSeconds(),
+  });
+
+  if (isCorrect) {
     const elapsed = QUESTION_TIME - timeLeft;
     const tier = SCORE_TIERS.find(t => elapsed <= t.maxElapsed);
     state.score += tier ? tier.points : 0;
@@ -207,41 +321,67 @@ function handleAnswerClick(selectedIndex, button, clickRenderId) {
 
 function handleNextClick() {
   stopTimer();
-  const total = state.questions.length;
-  if (state.currentIndex < total - 1) {
-    state.currentIndex += 1;
-    renderQuestion();
-  } else {
-    showResultScreen();
+  const nextIndex = pickNextQuestionIndex();
+  if (nextIndex === null) {
+    showResultScreen(true);
+    return;
   }
+  state.currentIndex = nextIndex;
+  renderQuestion();
 }
 
-function showResultScreen(timedOut = false) {
+function truncateText(text, maxLength = 34) {
+  return text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text;
+}
+
+function renderResultHistory() {
+  const list = document.getElementById('resultHistoryList');
+  list.innerHTML = '';
+
+  state.history.forEach((entry, index) => {
+    const item = document.createElement('li');
+    item.className = `result-history-item ${entry.isCorrect ? 'result-history-item--correct' : 'result-history-item--wrong'}`;
+    const timeLabel = entry.timedOut ? '⏰ לא הספקתם' : `⏱️ ${entry.elapsed.toFixed(1)} שנ׳`;
+    item.innerHTML = `
+      <span class="result-history-item__icon">${entry.isCorrect ? '✔' : '✘'}</span>
+      <span class="result-history-item__text">${index + 1}. ${truncateText(entry.text)}</span>
+      <span class="result-history-item__time">${timeLabel}</span>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function showResultScreen(poolExhausted = false) {
   stopTimer();
   stopGlobalTimer();
 
-  if (!timedOut) {
-    document.getElementById('progressFill').style.width = '100%';
-  }
   document.getElementById('questionCard').hidden = true;
   document.getElementById('answersGrid').hidden = true;
 
   const resultScreen = document.getElementById('resultScreen');
   resultScreen.hidden = false;
-  document.getElementById('resultTitle').textContent = timedOut ? 'הזמן נגמר!' : 'סיימתם!';
-  const maxScore = state.questions.length * SCORE_TIERS[0].points;
-  document.getElementById('resultScore').textContent = timedOut
-    ? `נגמר הזמן! הספקתם לצבור ${state.score} נקודות מתוך ${maxScore}`
-    : `הצלחתם! צברתם ${state.score} נקודות מתוך ${maxScore}`;
+  requestAnimationFrame(() => resultScreen.classList.add('result-screen--visible'));
+  document.getElementById('resultTitle').textContent = poolExhausted ? 'עניתם על כל השאלות!' : 'הזמן נגמר!';
+
+  const correctCount = state.history.filter(entry => entry.isCorrect).length;
+  document.getElementById('resultScore').textContent = `צברתם ${state.score} נקודות`;
+  document.getElementById('resultAccuracy').textContent =
+    `הצלחתם לענות נכון על ${correctCount} מתוך ${state.answeredCount} שאלות שנענו`;
+
+  renderResultHistory();
 }
 
 function restartQuiz() {
-  state.currentIndex = 0;
+  state.history = [];
+  state.currentIndex = pickNextOrResetIndex();
   state.score = 0;
+  state.answeredCount = 0;
 
   document.getElementById('questionCard').hidden = false;
   document.getElementById('answersGrid').hidden = false;
-  document.getElementById('resultScreen').hidden = true;
+  const resultScreen = document.getElementById('resultScreen');
+  resultScreen.hidden = true;
+  resultScreen.classList.remove('result-screen--visible');
 
   startGlobalTimer();
   renderQuestion();
