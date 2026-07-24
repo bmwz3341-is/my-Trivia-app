@@ -477,6 +477,14 @@ body {
   transform: translateY(0);
 }
 
+.result-title-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .result-title {
   font-size: 1.6rem;
   font-weight: 800;
@@ -488,26 +496,20 @@ body {
   font-weight: 600;
 }
 
-.result-accuracy-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-
 .result-accuracy {
   font-size: 0.9rem;
   font-weight: 600;
   opacity: 0.85;
-  text-align: right;
 }
 
 .leaderboard-nav-button--compact {
   flex-shrink: 0;
-  padding: 6px 14px;
-  font-size: 13px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.leaderboard-nav-button.leaderboard-nav-button--compact {
+  color: #ffffff;
 }
 
 .result-history-list {
