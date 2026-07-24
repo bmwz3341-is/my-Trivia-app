@@ -504,8 +504,8 @@ body {
 
 .leaderboard-nav-button--compact {
   flex-shrink: 0;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 12px 22px;
+  font-size: 19px;
 }
 
 .leaderboard-nav-button.leaderboard-nav-button--compact {
