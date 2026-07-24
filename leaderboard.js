@@ -38,7 +38,7 @@ function buildLeaderboardItem(entry, rank, isCurrent) {
   item.className = `leaderboard-item${isCurrent ? ' leaderboard-item--current' : ''}`;
   item.innerHTML = `
     <span class="leaderboard-item__rank">#${rank}</span>
-    <span class="leaderboard-item__avatar">${entry.avatar}</span>
+    <span class="leaderboard-item__avatar">${getAvatarMarkup(entry.avatar)}</span>
     <span class="leaderboard-item__name">${escapeHtml(entry.name)}</span>
     <span class="leaderboard-item__category">${escapeHtml(entry.category || '')}</span>
     <span class="leaderboard-item__score">${entry.score} נק'</span>

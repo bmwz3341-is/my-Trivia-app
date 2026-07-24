@@ -1,7 +1,58 @@
 const PLAYER_PROFILE_STORAGE_KEY = 'triviaPlayerProfile';
 const PLAYER_ID_STORAGE_KEY = 'triviaPlayerId';
 
-const AVATAR_OPTIONS = ['🦁', '🐯', '🦊', '🐼', '🐨', '🐵', '🦄', '🐲', '🤖', '👾', '🦉', '🐺'];
+const DICEBEAR_BASE_URL = 'https://api.dicebear.com/9.x';
+
+const AVATAR_OPTIONS = [
+  { id: 'ninja', name: 'נינג\'ה', style: 'adventurer', seed: 'ninja-shadow-99' },
+  { id: 'iceMage', name: 'קוסמת קרח', style: 'adventurer', seed: 'frost-mage-12' },
+  { id: 'fireWarrior', name: 'לוחם אש', style: 'adventurer', seed: 'blaze-warrior-5' },
+  { id: 'wizard', name: 'קוסם', style: 'adventurer', seed: 'arcane-wizard-8' },
+  { id: 'robotOne', name: 'רובוט קרבי', style: 'bottts', seed: 'battle-bot-3' },
+  { id: 'robotTwo', name: 'דרואיד חלל', style: 'bottts', seed: 'space-droid-21' },
+  { id: 'robotThree', name: 'רובוט ידידותי', style: 'bottts', seed: 'friendly-bot-17' },
+  { id: 'pixelHero', name: 'גיבור פיקסלים', style: 'pixel-art', seed: 'pixel-hero-1' },
+  { id: 'pixelRogue', name: 'שודד רטרו', style: 'pixel-art', seed: 'retro-rogue-6' },
+  { id: 'pixelKnight', name: 'אביר 8-ביט', style: 'pixel-art', seed: 'eight-bit-knight-9' },
+  { id: 'cartoonHero', name: 'גיבור-על מצויר', style: 'big-smile', seed: 'super-hero-14' },
+  { id: 'cartoonMage', name: 'קוסמת מצוירת', style: 'big-smile', seed: 'cartoon-mage-2' },
+  { id: 'steelGuardian', name: 'שומר הפלדה', style: 'avataaars', seed: 'steel-guardian-1' },
+  { id: 'crimsonBolt', name: 'הברק הארגמן', style: 'avataaars', seed: 'crimson-bolt-4' },
+  { id: 'shadowWeb', name: 'לוחם הרשת', style: 'avataaars', seed: 'shadow-web-7' },
+  { id: 'skyDefender', name: 'מגן השמיים', style: 'avataaars', seed: 'sky-defender-2' },
+  { id: 'ironTitan', name: 'טיטאן הברזל', style: 'bottts', seed: 'iron-titan-9' },
+  { id: 'mysticShield', name: 'המגן המיסטי', style: 'personas', seed: 'mystic-shield-3' },
+  { id: 'junglePathfinder', name: 'גששת ג\'ונגל', style: 'micah', seed: 'jungle-pathfinder-3' },
+  { id: 'starGuardian', name: 'שומרת הכוכבים', style: 'micah', seed: 'star-guardian-8' },
+  { id: 'desertNomad', name: 'נווד המדבר', style: 'notionists', seed: 'desert-nomad-5' },
+  { id: 'seaPirate', name: 'פיראט הים', style: 'notionists', seed: 'sea-pirate-2' },
+  { id: 'circusJester', name: 'ליצן קרקס', style: 'fun-emoji', seed: 'circus-jester-6' },
+  { id: 'arenaChampion', name: 'אלוף הזירה', style: 'thumbs', seed: 'arena-champion-9' },
+  { id: 'forestSpirit', name: 'רוח היער', style: 'lorelei', seed: 'forest-spirit-4' },
+  { id: 'stormRider', name: 'רוכב הסערה', style: 'open-peeps', seed: 'storm-rider-7' },
+  { id: 'jollyGrandpa', name: 'סבא עליז', style: 'avataaars', seed: 'jolly-grandpa-11' },
+  { id: 'wiseElder', name: 'הזקן החכם', style: 'avataaars', seed: 'wise-elder-6' },
+  { id: 'grannyWarrior', name: 'סבתא לוחמת', style: 'avataaars', seed: 'granny-warrior-3' },
+  { id: 'gigglingGoblin', name: 'גובלין צחקן', style: 'croodles', seed: 'giggling-goblin-9' },
+  { id: 'sillyProfessor', name: 'פרופסור מצחיק', style: 'croodles', seed: 'silly-professor-2' },
+  { id: 'happyChef', name: 'טבח שמח', style: 'big-smile', seed: 'happy-chef-7' },
+  { id: 'cheerfulExplorer', name: 'חוקרת שמחה', style: 'big-smile', seed: 'cheerful-explorer-5' },
+  { id: 'grinningPrankster', name: 'קונדס מחייך', style: 'fun-emoji', seed: 'grinning-prankster-8' },
+];
+
+function getAvatarById(avatarId) {
+  return AVATAR_OPTIONS.find((avatar) => avatar.id === avatarId) || AVATAR_OPTIONS[0];
+}
+
+function getAvatarUrl(avatarId) {
+  const avatar = getAvatarById(avatarId);
+  return `${DICEBEAR_BASE_URL}/${avatar.style}/svg?seed=${encodeURIComponent(avatar.seed)}`;
+}
+
+function getAvatarMarkup(avatarId) {
+  const avatar = getAvatarById(avatarId);
+  return `<img src="${getAvatarUrl(avatarId)}" alt="${escapeHtml(avatar.name)}" loading="lazy">`;
+}
 
 function getOrCreatePlayerId() {
   let id = localStorage.getItem(PLAYER_ID_STORAGE_KEY);
@@ -71,10 +122,10 @@ function ensureProfileModal() {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'avatar-option';
-    button.textContent = avatar;
-    button.dataset.avatar = avatar;
-    button.setAttribute('aria-label', `בחר דמות ${avatar}`);
-    button.addEventListener('click', () => selectAvatar(avatar));
+    button.innerHTML = getAvatarMarkup(avatar.id);
+    button.dataset.avatar = avatar.id;
+    button.setAttribute('aria-label', `בחר דמות ${avatar.name}`);
+    button.addEventListener('click', () => selectAvatar(avatar.id));
     avatarGrid.appendChild(button);
   });
 
@@ -85,10 +136,10 @@ function ensureProfileModal() {
   });
 }
 
-function selectAvatar(avatar) {
-  profileModalState.selectedAvatar = avatar;
+function selectAvatar(avatarId) {
+  profileModalState.selectedAvatar = avatarId;
   document.querySelectorAll('#avatarGrid .avatar-option').forEach((btn) => {
-    btn.classList.toggle('avatar-option--selected', btn.dataset.avatar === avatar);
+    btn.classList.toggle('avatar-option--selected', btn.dataset.avatar === avatarId);
   });
   updateStartButtonState();
 }
@@ -143,7 +194,7 @@ function renderPlayerBadge(container, { editable = false, profile: profileOverri
     badge.setAttribute('aria-label', 'ערוך פרופיל שחקן');
   }
   badge.innerHTML = `
-    <span class="player-badge__avatar">${profile.avatar}</span>
+    <span class="player-badge__avatar">${getAvatarMarkup(profile.avatar)}</span>
     <span class="player-badge__name">${escapeHtml(profile.name)}</span>
     ${editable ? '<span class="player-badge__edit">✎</span>' : ''}
   `;

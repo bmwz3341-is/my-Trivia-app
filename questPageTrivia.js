@@ -70,6 +70,9 @@ async function initQuestPage() {
     window.location.href = `subCategoryPage.html?category=${state.category}`;
   });
   document.getElementById('restartButton').addEventListener('click', restartQuiz);
+  document.getElementById('leaderboardButton').addEventListener('click', () => {
+    window.location.href = 'leaderboardPage.html';
+  });
   document.getElementById('homeButton').addEventListener('click', () => {
     window.location.href = 'index.html';
   });
@@ -371,6 +374,15 @@ function showResultScreen(poolExhausted = false) {
 
   renderResultHistory();
   recordAndRenderLeaderboard();
+  triggerLeaderboardButtonBlink();
+}
+
+function triggerLeaderboardButtonBlink() {
+  const button = document.getElementById('leaderboardButton');
+  if (!button) return;
+  button.classList.remove('leaderboard-nav-button--blink');
+  void button.offsetWidth;
+  button.classList.add('leaderboard-nav-button--blink');
 }
 
 async function recordAndRenderLeaderboard() {

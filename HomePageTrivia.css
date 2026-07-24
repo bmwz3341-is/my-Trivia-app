@@ -94,25 +94,8 @@ body {
   font-weight: 600;
 }
 
-.leaderboard-nav-button {
+.leaderboard-nav-button--home {
   align-self: flex-start;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: 2px solid rgba(255, 212, 0, 0.4);
-  color: #ffd400;
-  padding: 10px 20px;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.leaderboard-nav-button:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 212, 0, 0.12);
 }
 
 .category-grid {

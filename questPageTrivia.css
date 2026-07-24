@@ -21,7 +21,7 @@ body {
   align-items: center;
   gap: 20px;
   background: linear-gradient(to bottom, #2b0000, #990000);
-  padding: 24px 20px 40px;
+  padding: 24px 20px 80px;
 }
 
 .quest-header {
@@ -35,6 +35,10 @@ body {
 }
 
 .back-button {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 40;
   width: 40px;
   height: 40px;
   flex-shrink: 0;
@@ -484,11 +488,26 @@ body {
   font-weight: 600;
 }
 
+.result-accuracy-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
 .result-accuracy {
   font-size: 0.9rem;
   font-weight: 600;
   opacity: 0.85;
-  margin-bottom: 4px;
+  text-align: right;
+}
+
+.leaderboard-nav-button--compact {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  font-size: 13px;
 }
 
 .result-history-list {
