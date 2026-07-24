@@ -1,6 +1,20 @@
 const PLAYER_PROFILE_STORAGE_KEY = 'triviaPlayerProfile';
+const PLAYER_ID_STORAGE_KEY = 'triviaPlayerId';
 
 const AVATAR_OPTIONS = ['🦁', '🐯', '🦊', '🐼', '🐨', '🐵', '🦄', '🐲', '🤖', '👾', '🦉', '🐺'];
+
+function getOrCreatePlayerId() {
+  let id = localStorage.getItem(PLAYER_ID_STORAGE_KEY);
+  if (!id) {
+    id = `p-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    try {
+      localStorage.setItem(PLAYER_ID_STORAGE_KEY, id);
+    } catch (err) {
+      // ignore storage failures (e.g. private browsing quota)
+    }
+  }
+  return id;
+}
 
 function escapeHtml(text) {
   const div = document.createElement('div');

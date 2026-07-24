@@ -381,6 +381,7 @@ async function recordAndRenderLeaderboard() {
 
   try {
     const { entry, rank, total } = await addLeaderboardEntry({
+      playerId: getOrCreatePlayerId(),
       name: profile.name,
       avatar: profile.avatar,
       score: state.score,
@@ -390,6 +391,7 @@ async function recordAndRenderLeaderboard() {
     document.getElementById('leaderboardRankInfo').textContent = `המיקום שלכם בלוח התוצאות: #${rank} מתוך ${total}`;
     await renderLeaderboard(document.getElementById('leaderboardList'), { highlightId: entry.id });
   } catch (err) {
+    console.error('Leaderboard error:', err.code || '', err.message || err);
     document.getElementById('leaderboardRankInfo').textContent = 'לא ניתן היה לטעון את לוח התוצאות כרגע';
   }
 }

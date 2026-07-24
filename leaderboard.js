@@ -3,24 +3,33 @@ const LEADERBOARD_DISPLAY_LIMIT = 10;
 
 const leaderboardRef = firebase.firestore().collection(LEADERBOARD_COLLECTION);
 
-async function addLeaderboardEntry({ name, avatar, score, category }) {
-  const docRef = await leaderboardRef.add({
-    name,
-    avatar,
-    score,
-    category,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+async function addLeaderboardEntry({ playerId, name, avatar, score, category }) {
+  const docRef = leaderboardRef.doc(playerId);
+
+  await firebase.firestore().runTransaction(async (tx) => {
+    const doc = await tx.get(docRef);
+    if (doc.exists && doc.data().score >= score) return;
+    tx.set(docRef, {
+      name,
+      avatar,
+      score,
+      category,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
   });
 
+  const bestDoc = await docRef.get();
+  const entry = { id: docRef.id, ...bestDoc.data() };
+
   const [higherScoresSnapshot, totalSnapshot] = await Promise.all([
-    leaderboardRef.where('score', '>', score).count().get(),
-    leaderboardRef.count().get(),
+    leaderboardRef.where('score', '>', entry.score).get(),
+    leaderboardRef.get(),
   ]);
 
   return {
-    entry: { id: docRef.id, name, avatar, score, category },
-    rank: higherScoresSnapshot.data().count + 1,
-    total: totalSnapshot.data().count,
+    entry,
+    rank: higherScoresSnapshot.size + 1,
+    total: totalSnapshot.size,
   };
 }
 
@@ -53,8 +62,8 @@ async function renderLeaderboard(container, { highlightId } = {}) {
     const highlightDoc = await leaderboardRef.doc(highlightId).get();
     if (highlightDoc.exists) {
       const highlightEntry = { id: highlightDoc.id, ...highlightDoc.data() };
-      const higherScoresSnapshot = await leaderboardRef.where('score', '>', highlightEntry.score).count().get();
-      const rank = higherScoresSnapshot.data().count + 1;
+      const higherScoresSnapshot = await leaderboardRef.where('score', '>', highlightEntry.score).get();
+      const rank = higherScoresSnapshot.size + 1;
 
       const divider = document.createElement('li');
       divider.className = 'leaderboard-list__divider';
