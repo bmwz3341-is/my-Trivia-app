@@ -504,11 +504,11 @@ body {
 
 .leaderboard-nav-button--compact {
   flex-shrink: 0;
-  padding: 12px 22px;
-  font-size: 19px;
 }
 
 .leaderboard-nav-button.leaderboard-nav-button--compact {
+  padding: 12px 22px;
+  font-size: 19px;
   color: #ffffff;
 }
 
