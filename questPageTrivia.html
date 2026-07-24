@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טריוויה - שאלות</title>
   <link rel="stylesheet" href="questPageTrivia.css">
+  <link rel="stylesheet" href="profileLeaderboard.css">
 </head>
 <body>
+
+  <div id="questPlayerBadgeContainer" class="player-badge-slot"></div>
 
   <main class="quest-screen">
     <header class="quest-header">
@@ -61,9 +64,17 @@
 
     <section id="resultScreen" class="result-screen" hidden>
       <h2 id="resultTitle" class="result-title">סיימתם!</h2>
+      <div id="resultPlayerBadgeContainer" class="result-player-badge"></div>
       <p id="resultScore" class="result-score"></p>
       <p id="resultAccuracy" class="result-accuracy"></p>
       <ul id="resultHistoryList" class="result-history-list"></ul>
+
+      <section class="leaderboard-section">
+        <h3 class="leaderboard-section__title">לוח תוצאות</h3>
+        <p id="leaderboardRankInfo" class="leaderboard-section__rank-info"></p>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+      </section>
+
       <button id="restartButton" class="result-button" type="button">שחקו שוב</button>
       <button id="homeButton" class="result-button result-button--ghost" type="button">חזרה למסך הבית</button>
     </section>
@@ -98,6 +109,11 @@
     </div>
   </main>
 
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="playerProfile.js"></script>
+  <script src="leaderboard.js"></script>
   <script src="questPageTrivia.js"></script>
 </body>
 </html>

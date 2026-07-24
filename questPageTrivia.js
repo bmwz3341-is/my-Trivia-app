@@ -65,6 +65,7 @@ async function initQuestPage() {
   state.currentIndex = pickNextOrResetIndex();
 
   document.getElementById('categoryTitle').textContent = subCategoryData.title;
+  renderPlayerBadge(document.getElementById('questPlayerBadgeContainer'));
   document.getElementById('backButton').addEventListener('click', () => {
     window.location.href = `subCategoryPage.html?category=${state.category}`;
   });
@@ -369,6 +370,28 @@ function showResultScreen(poolExhausted = false) {
     `הצלחתם לענות נכון על ${correctCount} מתוך ${state.answeredCount} שאלות שנענו`;
 
   renderResultHistory();
+  recordAndRenderLeaderboard();
+}
+
+async function recordAndRenderLeaderboard() {
+  const profile = getPlayerProfile() || { name: 'אורח', avatar: '🙂' };
+  const categoryTitle = CATEGORY_DATA[state.category] ? CATEGORY_DATA[state.category].title : state.category;
+
+  renderPlayerBadge(document.getElementById('resultPlayerBadgeContainer'), { profile });
+
+  try {
+    const { entry, rank, total } = await addLeaderboardEntry({
+      name: profile.name,
+      avatar: profile.avatar,
+      score: state.score,
+      category: categoryTitle,
+    });
+
+    document.getElementById('leaderboardRankInfo').textContent = `המיקום שלכם בלוח התוצאות: #${rank} מתוך ${total}`;
+    await renderLeaderboard(document.getElementById('leaderboardList'), { highlightId: entry.id });
+  } catch (err) {
+    document.getElementById('leaderboardRankInfo').textContent = 'לא ניתן היה לטעון את לוח התוצאות כרגע';
+  }
 }
 
 function restartQuiz() {

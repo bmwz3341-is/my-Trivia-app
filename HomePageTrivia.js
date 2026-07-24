@@ -8,9 +8,22 @@ function initHomePage() {
   categoryCards.forEach((card) => {
     card.addEventListener('click', () => handleCategoryClick(card));
   });
+
+  renderPlayerBadge(document.getElementById('homePlayerBadgeContainer'), { editable: true });
 }
 
 function handleCategoryClick(card) {
   const category = card.dataset.category;
-  window.location.href = `subCategoryPage.html?category=${category}`;
+  const targetUrl = `subCategoryPage.html?category=${category}`;
+
+  if (hasPlayerProfile()) {
+    window.location.href = targetUrl;
+    return;
+  }
+
+  openProfileModal({
+    onConfirm: () => {
+      window.location.href = targetUrl;
+    },
+  });
 }
