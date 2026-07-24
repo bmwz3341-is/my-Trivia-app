@@ -10,6 +10,10 @@ function initHomePage() {
   });
 
   renderPlayerBadge(document.getElementById('homePlayerBadgeContainer'), { editable: true });
+
+  document.getElementById('leaderboardNavButton').addEventListener('click', () => {
+    window.location.href = 'leaderboardPage.html';
+  });
 }
 
 function handleCategoryClick(card) {

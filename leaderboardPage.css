@@ -1,0 +1,66 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.leaderboard-screen {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(to bottom, #2b0000, #990000);
+  padding: 24px 20px 80px;
+}
+
+.leaderboard-header {
+  width: 100%;
+  max-width: 600px;
+  color: #ffffff;
+}
+
+.back-button {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.leaderboard-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffd400;
+}
+
+.leaderboard-status {
+  color: #ffffff;
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+.leaderboard-list--full {
+  width: 100%;
+  max-width: 600px;
+  max-height: none;
+}

@@ -1,5 +1,5 @@
 const LEADERBOARD_COLLECTION = 'leaderboard';
-const LEADERBOARD_DISPLAY_LIMIT = 10;
+const LEADERBOARD_DISPLAY_LIMIT = 20;
 
 const leaderboardRef = firebase.firestore().collection(LEADERBOARD_COLLECTION);
 
@@ -8,11 +8,11 @@ async function addLeaderboardEntry({ playerId, name, avatar, score, category }) 
 
   await firebase.firestore().runTransaction(async (tx) => {
     const doc = await tx.get(docRef);
-    if (doc.exists && doc.data().score >= score) return;
+    const bestScore = doc.exists ? Math.max(doc.data().score, score) : score;
     tx.set(docRef, {
       name,
       avatar,
-      score,
+      score: bestScore,
       category,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טריוויה - לוח תוצאות</title>
+  <link rel="stylesheet" href="leaderboardPage.css">
+  <link rel="stylesheet" href="profileLeaderboard.css">
+</head>
+<body>
+
+  <div id="leaderboardPlayerBadgeContainer" class="player-badge-slot"></div>
+
+  <main class="leaderboard-screen">
+    <header class="leaderboard-header">
+      <button id="backButton" class="back-button" type="button" aria-label="חזרה">→</button>
+      <h1 class="leaderboard-title">לוח תוצאות גלובלי</h1>
+    </header>
+
+    <p id="leaderboardStatus" class="leaderboard-status">טוען...</p>
+    <ol id="leaderboardList" class="leaderboard-list leaderboard-list--full"></ol>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="playerProfile.js"></script>
+  <script src="leaderboard.js"></script>
+  <script src="leaderboardPage.js"></script>
+</body>
+</html>

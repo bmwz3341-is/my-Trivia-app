@@ -207,6 +207,7 @@ button.player-badge {
   min-width: 26px;
   text-align: center;
   font-weight: 900;
+  color: #ffffff;
   opacity: 0.85;
 }
 
@@ -219,6 +220,7 @@ button.player-badge {
   flex: 1;
   min-width: 0;
   font-weight: 700;
+  color: #ffffff;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -227,6 +229,7 @@ button.player-badge {
 .leaderboard-item__category {
   flex-shrink: 0;
   max-width: 90px;
+  color: #ffffff;
   opacity: 0.7;
   font-size: 0.72rem;
   overflow: hidden;
