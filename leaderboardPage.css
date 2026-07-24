@@ -22,11 +22,15 @@ body {
   gap: 16px;
   background: linear-gradient(to bottom, #2b0000, #990000);
   padding: 24px 20px 80px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .leaderboard-header {
   width: 100%;
   max-width: 720px;
+  box-sizing: border-box;
+  padding-right: 128px;
   color: #ffffff;
 }
 
@@ -51,6 +55,7 @@ body {
   font-size: 2rem;
   font-weight: 900;
   color: #ffd400;
+  overflow-wrap: break-word;
 }
 
 .leaderboard-status {
@@ -63,4 +68,14 @@ body {
   width: 100%;
   max-width: 720px;
   max-height: none;
+}
+
+@media (max-width: 480px) {
+  .leaderboard-header {
+    padding-right: 108px;
+  }
+
+  .leaderboard-title {
+    font-size: 1.3rem;
+  }
 }
