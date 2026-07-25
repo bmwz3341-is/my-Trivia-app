@@ -20,9 +20,8 @@
       <span class="quick-game-meta">· 8 שאלות</span>
     </button>
 
-    <button id="vsPlayerButton" class="vs-player-button" type="button" disabled>
+    <button id="vsPlayerButton" class="vs-player-button" type="button">
       <span>קרב מול משתמש</span>
-      <span class="vs-player-meta">· בקרוב</span>
     </button>
 
     <button id="leaderboardNavButton" class="leaderboard-nav-button leaderboard-nav-button--home" type="button">
@@ -77,7 +76,13 @@
     </section>
   </main>
 
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
   <script src="playerProfile.js"></script>
+  <script src="duel.js"></script>
+  <script src="duelSetup.js"></script>
   <script src="HomePageTrivia.js"></script>
 </body>
 </html>

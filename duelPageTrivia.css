@@ -1,0 +1,105 @@
+[hidden] {
+  display: none !important;
+}
+
+.duel-score-row {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.duel-score-card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 10px 14px;
+  color: #ffffff;
+}
+
+.duel-score-card__avatar {
+  width: 44px;
+  height: 44px;
+  line-height: 1;
+}
+
+.duel-score-card__avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.duel-score-card__name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.duel-score-card__score {
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: #ffd400;
+}
+
+.duel-score-row__vs {
+  flex-shrink: 0;
+  font-weight: 900;
+  font-size: 1.1rem;
+  opacity: 0.7;
+}
+
+.duel-waiting {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 32px 24px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.duel-waiting__title {
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.duel-waiting__hint {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.duel-room-code {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: #ffd400;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 10px 24px;
+  border-radius: 14px;
+}
+
+.duel-waiting-opponent {
+  width: 100%;
+  color: #ffffff;
+  font-weight: 700;
+  opacity: 0.85;
+  text-align: center;
+}

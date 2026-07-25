@@ -116,6 +116,30 @@
   box-shadow: none;
 }
 
+.duel-setup__option {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.duel-setup__option:last-child {
+  margin-bottom: 0;
+}
+
+.duel-setup__input {
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  font-weight: 800;
+}
+
+.duel-setup__error {
+  color: #ff8a8a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 12px;
+}
+
 /* Player badge (home corner + in-game header + result screen) */
 
 .player-badge-slot {

@@ -14,6 +14,14 @@ function initHomePage() {
   document.getElementById('leaderboardNavButton').addEventListener('click', () => {
     window.location.href = 'leaderboardPage.html';
   });
+
+  document.getElementById('vsPlayerButton').addEventListener('click', () => {
+    if (hasPlayerProfile()) {
+      openDuelSetupModal();
+      return;
+    }
+    openProfileModal({ onConfirm: () => openDuelSetupModal() });
+  });
 }
 
 function handleCategoryClick(card) {

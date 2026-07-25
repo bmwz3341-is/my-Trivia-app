@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טריוויה - קרב ראש-בראש</title>
+  <link rel="stylesheet" href="questPageTrivia.css">
+  <link rel="stylesheet" href="profileLeaderboard.css">
+  <link rel="stylesheet" href="duelPageTrivia.css">
+</head>
+<body>
+
+  <main class="quest-screen">
+    <header class="quest-header">
+      <button id="duelBackButton" class="back-button" type="button" aria-label="חזרה">→</button>
+      <div class="quest-header__info">
+        <h2 id="duelCategoryTitle" class="category-title">קרב ראש-בראש</h2>
+      </div>
+    </header>
+
+    <div class="duel-score-row">
+      <div class="duel-score-card" id="duelHostCard">
+        <span class="duel-score-card__avatar" id="duelHostAvatar"></span>
+        <span class="duel-score-card__name" id="duelHostName">שחקן 1</span>
+        <span class="duel-score-card__score" id="duelHostScore">0</span>
+      </div>
+      <div class="duel-score-row__vs">VS</div>
+      <div class="duel-score-card" id="duelGuestCard">
+        <span class="duel-score-card__avatar" id="duelGuestAvatar"></span>
+        <span class="duel-score-card__name" id="duelGuestName">ממתין...</span>
+        <span class="duel-score-card__score" id="duelGuestScore">0</span>
+      </div>
+    </div>
+
+    <section id="duelWaitingScreen" class="duel-waiting" hidden>
+      <p class="duel-waiting__title">מחכים ליריב...</p>
+      <p class="duel-waiting__hint">שתפו את הקוד הבא עם חבר:</p>
+      <div id="duelRoomCode" class="duel-room-code"></div>
+    </section>
+
+    <div class="progress-track">
+      <div id="duelProgressFill" class="progress-fill"></div>
+    </div>
+
+    <section id="duelQuestionCard" class="question-card" hidden>
+      <p id="duelQuestionText" class="question-text">טוען שאלה...</p>
+      <div id="duelTimerCard" class="timer-card timer-card--question">
+        <svg class="timer-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 9v4l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="timer-card__text">
+          <span class="timer-card__label">לשאלה</span>
+          <span id="duelTimerBadge" class="timer-card__number">15</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="duelAnswersGrid" class="answers-grid" hidden></section>
+
+    <p id="duelWaitingForOpponent" class="duel-waiting-opponent" hidden>ממתינים לתשובת היריב...</p>
+
+    <section id="duelResultScreen" class="result-screen" hidden>
+      <h2 id="duelResultTitle" class="result-title">הקרב הסתיים!</h2>
+      <p id="duelResultScore" class="result-score"></p>
+      <button id="duelHomeButton" class="result-button" type="button">חזרה למסך הבית</button>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="playerProfile.js"></script>
+  <script src="leaderboard.js"></script>
+  <script src="duel.js"></script>
+  <script src="duelPageTrivia.js"></script>
+</body>
+</html>

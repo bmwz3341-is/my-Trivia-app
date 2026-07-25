@@ -67,6 +67,23 @@ function getOrCreatePlayerId() {
   return id;
 }
 
+let authReadyPromise = null;
+
+function ensurePlayerAuth() {
+  if (!authReadyPromise) {
+    authReadyPromise = new Promise((resolve, reject) => {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          resolve(user.uid);
+        } else {
+          firebase.auth().signInAnonymously().catch(reject);
+        }
+      }, reject);
+    });
+  }
+  return authReadyPromise;
+}
+
 function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
