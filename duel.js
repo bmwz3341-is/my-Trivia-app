@@ -79,11 +79,13 @@ async function joinDuelRoom(rawCode) {
   return roomCode;
 }
 
-async function findAndJoinQuickMatch() {
+async function findAndJoinQuickMatch(category, subCategory) {
   const uid = await ensurePlayerAuth();
   const snapshot = await firebase.firestore()
     .collection(DUEL_COLLECTION)
     .where('status', '==', 'waiting')
+    .where('category', '==', category)
+    .where('subCategory', '==', subCategory)
     .limit(5)
     .get();
 

@@ -298,8 +298,7 @@ async function showDuelResult(data) {
       name: me.name,
       avatar: me.avatar,
       score: me.score,
-      category: 'קרב ראש-בראש',
-    });
+    }, DUEL_LEADERBOARD_COLLECTION);
   } catch (err) {
     console.error('Failed to record duel result on leaderboard:', err);
   }

@@ -1,10 +1,14 @@
 const LEADERBOARD_COLLECTION = 'leaderboard';
+const DUEL_LEADERBOARD_COLLECTION = 'duelLeaderboard';
 const LEADERBOARD_DISPLAY_LIMIT = 20;
 
-const leaderboardRef = firebase.firestore().collection(LEADERBOARD_COLLECTION);
+function leaderboardCollectionRef(collectionName) {
+  return firebase.firestore().collection(collectionName);
+}
 
-async function addLeaderboardEntry({ playerId, name, avatar, score, category }) {
-  const docRef = leaderboardRef.doc(playerId);
+async function addLeaderboardEntry({ playerId, name, avatar, score, category }, collectionName = LEADERBOARD_COLLECTION) {
+  const ref = leaderboardCollectionRef(collectionName);
+  const docRef = ref.doc(playerId);
 
   await firebase.firestore().runTransaction(async (tx) => {
     const doc = await tx.get(docRef);
@@ -13,7 +17,7 @@ async function addLeaderboardEntry({ playerId, name, avatar, score, category }) 
       name,
       avatar,
       score: bestScore,
-      category,
+      category: category || '',
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
   });
@@ -22,8 +26,8 @@ async function addLeaderboardEntry({ playerId, name, avatar, score, category }) 
   const entry = { id: docRef.id, ...bestDoc.data() };
 
   const [higherScoresSnapshot, totalSnapshot] = await Promise.all([
-    leaderboardRef.where('score', '>', entry.score).get(),
-    leaderboardRef.get(),
+    ref.where('score', '>', entry.score).get(),
+    ref.get(),
   ]);
 
   return {
@@ -46,11 +50,12 @@ function buildLeaderboardItem(entry, rank, isCurrent) {
   return item;
 }
 
-async function renderLeaderboard(container, { highlightId } = {}) {
+async function renderLeaderboard(container, { highlightId, collectionName = LEADERBOARD_COLLECTION } = {}) {
   if (!container) return;
   container.innerHTML = '';
+  const ref = leaderboardCollectionRef(collectionName);
 
-  const topSnapshot = await leaderboardRef.orderBy('score', 'desc').limit(LEADERBOARD_DISPLAY_LIMIT).get();
+  const topSnapshot = await ref.orderBy('score', 'desc').limit(LEADERBOARD_DISPLAY_LIMIT).get();
   const topEntries = topSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
   topEntries.forEach((entry, index) => {
@@ -59,10 +64,10 @@ async function renderLeaderboard(container, { highlightId } = {}) {
 
   const highlightInTop = highlightId && topEntries.some((e) => e.id === highlightId);
   if (highlightId && !highlightInTop) {
-    const highlightDoc = await leaderboardRef.doc(highlightId).get();
+    const highlightDoc = await ref.doc(highlightId).get();
     if (highlightDoc.exists) {
       const highlightEntry = { id: highlightDoc.id, ...highlightDoc.data() };
-      const higherScoresSnapshot = await leaderboardRef.where('score', '>', highlightEntry.score).get();
+      const higherScoresSnapshot = await ref.where('score', '>', highlightEntry.score).get();
       const rank = higherScoresSnapshot.size + 1;
 
       const divider = document.createElement('li');

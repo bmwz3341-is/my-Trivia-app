@@ -40,53 +40,7 @@ function openDuelSetupModal() {
   ensureDuelSetupModal();
   clearDuelSetupError();
   document.getElementById('duelSetupOverlay').hidden = false;
-  renderDuelChoiceStep();
-}
-
-function renderDuelChoiceStep() {
-  clearDuelSetupError();
-  document.getElementById('duelSetupHint').textContent = 'בחרו איך להתחיל';
-  document.getElementById('duelSetupBody').innerHTML = `
-    <button id="duelQuickMatchChoice" class="profile-modal__start-button duel-setup__option" type="button">קרב מהיר מול יריב אקראי</button>
-    <button id="duelCreateChoice" class="profile-modal__start-button duel-setup__option" type="button">צור חדר חדש</button>
-    <button id="duelJoinChoice" class="profile-modal__start-button duel-setup__option" type="button">הצטרף עם קוד</button>
-  `;
-  document.getElementById('duelQuickMatchChoice').addEventListener('click', handleQuickMatch);
-  document.getElementById('duelCreateChoice').addEventListener('click', renderDuelCategoryStep);
-  document.getElementById('duelJoinChoice').addEventListener('click', renderDuelJoinStep);
-}
-
-function pickRandomCategoryAndSubcategory(categoryData) {
-  const categoryKeys = Object.keys(categoryData);
-  const categoryKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
-  const subKeys = Object.keys(categoryData[categoryKey].subcategories);
-  const subKey = subKeys[Math.floor(Math.random() * subKeys.length)];
-  return { categoryKey, subKey, questionCount: categoryData[categoryKey].subcategories[subKey].questions.length };
-}
-
-async function handleQuickMatch() {
-  clearDuelSetupError();
-  document.getElementById('duelSetupHint').textContent = 'מחפשים יריב...';
-  document.getElementById('duelSetupBody').innerHTML = '';
-
-  try {
-    const joinedRoomCode = await findAndJoinQuickMatch();
-    if (joinedRoomCode) {
-      window.location.href = `duelPageTrivia.html?room=${joinedRoomCode}`;
-      return;
-    }
-
-    if (!duelCategoryDataCache) {
-      const response = await fetch('questions.json');
-      duelCategoryDataCache = await response.json();
-    }
-    const { categoryKey, subKey, questionCount } = pickRandomCategoryAndSubcategory(duelCategoryDataCache);
-    const roomCode = await createDuelRoom({ category: categoryKey, subCategory: subKey, questionCount });
-    window.location.href = `duelPageTrivia.html?room=${roomCode}`;
-  } catch (err) {
-    showDuelSetupError('לא הצלחנו למצוא או ליצור קרב. נסו שוב.');
-    renderDuelChoiceStep();
-  }
+  renderDuelCategoryStep();
 }
 
 async function renderDuelCategoryStep() {
@@ -100,12 +54,11 @@ async function renderDuelCategoryStep() {
       duelCategoryDataCache = await response.json();
     } catch (err) {
       showDuelSetupError('לא הצלחנו לטעון את הקטגוריות. נסו שוב.');
-      renderDuelChoiceStep();
       return;
     }
   }
 
-  document.getElementById('duelSetupHint').textContent = 'בחרו קטגוריה';
+  document.getElementById('duelSetupHint').textContent = 'בחרו קטגוריה לקרב המהיר';
   const body = document.getElementById('duelSetupBody');
   body.innerHTML = '';
   Object.entries(duelCategoryDataCache).forEach(([key, cat]) => {
@@ -128,52 +81,34 @@ function renderDuelSubCategoryStep(categoryKey, categoryData) {
     button.type = 'button';
     button.className = 'profile-modal__start-button duel-setup__option';
     button.textContent = `${sub.title} · ${sub.questions.length} שאלות`;
-    button.addEventListener('click', () => handleDuelCreate(categoryKey, subKey, sub.questions.length));
+    button.addEventListener('click', () => handleQuickMatch(categoryKey, subKey));
     body.appendChild(button);
   });
 }
 
-async function handleDuelCreate(category, subCategory, questionCount) {
+async function handleQuickMatch(categoryKey, subKey) {
   clearDuelSetupError();
-  document.getElementById('duelSetupHint').textContent = 'יוצר חדר...';
+  document.getElementById('duelSetupHint').textContent = 'מחפשים יריב...';
   document.getElementById('duelSetupBody').innerHTML = '';
-  try {
-    const roomCode = await createDuelRoom({ category, subCategory, questionCount });
-    window.location.href = `duelPageTrivia.html?room=${roomCode}`;
-  } catch (err) {
-    showDuelSetupError('משהו השתבש ביצירת החדר. נסו שוב.');
-    renderDuelChoiceStep();
-  }
-}
 
-function renderDuelJoinStep() {
-  clearDuelSetupError();
-  document.getElementById('duelSetupHint').textContent = 'הזינו את הקוד שקיבלתם מהחבר';
-  document.getElementById('duelSetupBody').innerHTML = `
-    <input id="duelJoinCodeInput" class="profile-modal__input duel-setup__input" type="text" maxlength="5" placeholder="קוד חדר" autocomplete="off">
-    <button id="duelJoinSubmit" class="profile-modal__start-button duel-setup__option" type="button">הצטרף</button>
-  `;
-  document.getElementById('duelJoinSubmit').addEventListener('click', handleDuelJoin);
-}
-
-async function handleDuelJoin() {
-  const input = document.getElementById('duelJoinCodeInput');
-  const code = input.value.trim();
-  if (!code) return;
-  clearDuelSetupError();
-  const submitButton = document.getElementById('duelJoinSubmit');
-  submitButton.disabled = true;
   try {
-    const roomCode = await joinDuelRoom(code);
-    window.location.href = `duelPageTrivia.html?room=${roomCode}`;
-  } catch (err) {
-    submitButton.disabled = false;
-    if (err.message === 'ROOM_NOT_FOUND') {
-      showDuelSetupError('לא נמצא חדר עם הקוד הזה.');
-    } else if (err.message === 'ROOM_FULL') {
-      showDuelSetupError('החדר הזה כבר מלא.');
-    } else {
-      showDuelSetupError('משהו השתבש. נסו שוב.');
+    const joinedRoomCode = await findAndJoinQuickMatch(categoryKey, subKey);
+    if (joinedRoomCode) {
+      window.location.href = `duelPageTrivia.html?room=${joinedRoomCode}`;
+      return;
     }
+
+    const questionCount = duelCategoryDataCache[categoryKey].subcategories[subKey].questions.length;
+    const roomCode = await createDuelRoom({ category: categoryKey, subCategory: subKey, questionCount });
+    window.location.href = `duelPageTrivia.html?room=${roomCode}`;
+  } catch (err) {
+    showDuelSetupError('לא הצלחנו למצוא או ליצור קרב.');
+    document.getElementById('duelSetupHint').textContent = '';
+    const retryButton = document.createElement('button');
+    retryButton.type = 'button';
+    retryButton.className = 'profile-modal__start-button duel-setup__option';
+    retryButton.textContent = 'נסו שוב';
+    retryButton.addEventListener('click', () => handleQuickMatch(categoryKey, subKey));
+    document.getElementById('duelSetupBody').appendChild(retryButton);
   }
 }

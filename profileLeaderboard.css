@@ -125,13 +125,6 @@
   margin-bottom: 0;
 }
 
-.duel-setup__input {
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 6px;
-  font-weight: 800;
-}
-
 .duel-setup__error {
   color: #ff8a8a;
   font-size: 0.85rem;

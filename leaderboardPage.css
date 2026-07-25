@@ -58,6 +58,30 @@ body {
   overflow-wrap: break-word;
 }
 
+.leaderboard-tabs {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 720px;
+}
+
+.leaderboard-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid rgba(255, 212, 0, 0.4);
+  border-radius: 14px;
+  background: transparent;
+  color: #ffd400;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.leaderboard-tab--active {
+  background: rgba(255, 212, 0, 0.18);
+}
+
 .leaderboard-status {
   color: #ffffff;
   opacity: 0.8;
