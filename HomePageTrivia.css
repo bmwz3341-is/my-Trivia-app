@@ -10,7 +10,11 @@ html, body {
 }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
+}
+
+button {
+  font-family: inherit;
 }
 
 .home-screen {
@@ -18,175 +22,221 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 24px;
-  background: linear-gradient(to bottom, #2b0000, #990000);
-  text-align: center;
-  padding: 28px 20px 40px;
-}
-
-.start-button {
-  margin-top: auto;
-  margin-bottom: 60px;
+  gap: 20px;
+  background: linear-gradient(160deg, #FF3D81, #6C2BD9);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  padding: 28px 22px 48px;
+  direction: rtl;
 }
 
 .app-title {
-  align-self: flex-end;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 34px;
   text-align: left;
-  color: #ffd400;
-  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-  font-size: 3.5rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .app-subtitle {
-  align-self: flex-start;
-  text-align: right;
   color: #ffffff;
-  font-size: 1.2rem;
-  font-weight: 400;
-  max-width: 600px;
+  opacity: 0.92;
+  font-size: 16px;
+  line-height: 1.7;
+  font-weight: 500;
+  text-align: right;
+}
+
+.quick-game-button,
+.vs-player-button,
+.leaderboard-nav-button.leaderboard-nav-button--home {
+  width: 80%;
+  align-self: center;
 }
 
 .quick-game-button {
-  align-self: flex-start;
-  margin-top: 3rem;
+  margin-top: 100px;
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  justify-content: center;
   gap: 6px;
-  background: linear-gradient(180deg, #ffc93c 0%, #ffa724 100%);
-  color: #3a1d00;
-  padding: 6px 14px;
-  border-radius: 999px;
+  background: #22D3EE;
+  color: #141110;
   font-weight: 900;
-  font-size: 13px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-size: 22px;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 5px 0 #0F9BAA;
   cursor: pointer;
-  box-shadow: 0 4px 0 #a85e0a, inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.quick-game-title {
-  font-weight: 900;
-  letter-spacing: 0.3px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+.quick-game-button:hover {
+  transform: translateY(-2px);
+}
+
+.quick-game-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #0F9BAA;
 }
 
 .vs-player-button {
-  align-self: flex-start;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
   background: transparent;
-  border: 2px solid rgba(255, 212, 0, 0.4);
-  color: #ffd400;
-  padding: 12px 20px;
-  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  color: #ffffff;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 22px;
+  padding: 12px 16px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
 .vs-player-button:hover {
   transform: translateY(-2px);
-  background: rgba(255, 212, 0, 0.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.leaderboard-nav-button--home {
-  align-self: flex-start;
+.vs-player-button:active {
+  transform: translateY(1px);
+}
+
+/* Higher-specificity chained selector so this wins over the shared
+   .leaderboard-nav-button rules in profileLeaderboard.css regardless of load order */
+.leaderboard-nav-button.leaderboard-nav-button--home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 22px;
+  padding: 12px 16px;
+  border-radius: 999px;
+}
+
+.leaderboard-nav-button.leaderboard-nav-button--home span:first-child {
+  font-size: 34px;
+}
+
+.leaderboard-nav-button.leaderboard-nav-button--home:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.leaderboard-nav-button.leaderboard-nav-button--home:active {
+  transform: translateY(1px);
 }
 
 .category-grid {
-  width: 100%;
-  max-width: 600px;
-  margin-top: 64px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
 }
 
 .category-card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
   text-align: right;
   border: none;
   border-radius: 20px;
-  padding: 8px 18px;
+  padding: 10px 16px;
   cursor: pointer;
   color: #ffffff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .category-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
 }
 
 .category-card:active {
-  transform: translateY(-1px);
+  transform: translateY(1px);
 }
 
 .category-card--purple {
-  background: #6b35e8;
+  background: #6A3FB5;
 }
 
 .category-card--teal {
-  background: #1a8c9e;
+  background: #3FAE6B;
 }
 
 .category-card--orange {
-  background: #d95330;
+  background: #F5EF1E;
+  color: #141110;
 }
 
 .category-card--green {
-  background: #2d8a4e;
+  background: #ffffff;
+  color: #141110;
 }
 
 .category-card__title {
-  font-size: 1.15rem;
-  font-weight: 800;
+  font-size: 19px;
+  font-weight: 900;
 }
 
 .category-card__subtitle {
-  font-size: 0.9rem;
+  font-size: 15px;
   font-weight: 400;
-  opacity: 0.85;
+  opacity: 0.75;
+  margin-top: 4px;
+}
+
+.category-card--orange .category-card__subtitle,
+.category-card--green .category-card__subtitle {
+  opacity: 0.7;
 }
 
 .category-card__footer {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 2px;
-}
-
-.category-card__tag {
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.2);
+  margin-top: 8px;
 }
 
 .category-card__difficulty {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .category-card__difficulty span {
-  width: 18px;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.85);
+  width: 26px;
+  height: 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.category-card__difficulty span:first-child {
+  background: #ffffff;
 }
 
 .category-card__difficulty span:last-child {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.category-card--orange .category-card__difficulty span,
+.category-card--green .category-card__difficulty span {
+  background: rgba(20, 17, 16, 0.5);
+}
+
+.category-card--orange .category-card__difficulty span:first-child,
+.category-card--green .category-card__difficulty span:first-child {
+  background: #141110;
+}
+
+.category-card--orange .category-card__difficulty span:last-child,
+.category-card--green .category-card__difficulty span:last-child {
+  background: rgba(20, 17, 16, 0.25);
 }

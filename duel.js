@@ -1,7 +1,7 @@
 const DUEL_COLLECTION = 'duels';
 const DUEL_ROOM_CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const DUEL_ROOM_CODE_LENGTH = 5;
-const DUEL_QUESTION_COUNT = 8;
+const DUEL_QUESTION_COUNT = 20;
 const DUEL_ROOM_TTL_HOURS = 24;
 
 function duelDocRef(roomCode) {
@@ -16,13 +16,65 @@ function generateDuelRoomCode() {
   return code;
 }
 
-function shuffledDuelIndices(count, take) {
+// Same localStorage queue format/key as pickNextOrResetIndex() in questPageTrivia.js
+// (triviaQueue::<category>::<subCategory> => { total, queue }), so solo play and duels
+// draw from one shared, non-repeating rotation per category/sub-category.
+function getSharedQuestionQueueKey(category, subCategory) {
+  return `triviaQueue::${category}::${subCategory}`;
+}
+
+function shuffledIndicesPool(count) {
   const arr = Array.from({ length: count }, (_, i) => i);
   for (let i = arr.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return arr.slice(0, take);
+  return arr;
+}
+
+function loadSharedQuestionQueue(category, subCategory, totalQuestions) {
+  try {
+    const raw = localStorage.getItem(getSharedQuestionQueueKey(category, subCategory));
+    const saved = raw ? JSON.parse(raw) : null;
+    if (saved && saved.total === totalQuestions && Array.isArray(saved.queue) && saved.queue.length > 0) {
+      return saved.queue;
+    }
+  } catch (err) {
+    // localStorage unavailable or corrupted; fall back to a fresh shuffle below
+  }
+  return shuffledIndicesPool(totalQuestions);
+}
+
+function saveSharedQuestionQueue(category, subCategory, totalQuestions, queue) {
+  try {
+    localStorage.setItem(getSharedQuestionQueueKey(category, subCategory), JSON.stringify({ total: totalQuestions, queue }));
+  } catch (err) {
+    // ignore storage failures (e.g. private browsing quota)
+  }
+}
+
+// Draws `take` unique question indices (capped to totalQuestions) from the shared
+// rotating pool, reshuffling on exhaustion — mirrors pickNextOrResetIndex()'s behavior
+// but returns a whole batch up front for the duel room, with no repeats within the batch.
+function drawDuelQuestionIndices(category, subCategory, totalQuestions, take) {
+  const capped = Math.min(take, totalQuestions);
+  let queue = loadSharedQuestionQueue(category, subCategory, totalQuestions);
+  const seen = new Set();
+  const result = [];
+
+  while (result.length < capped) {
+    if (queue.length === 0) {
+      queue = shuffledIndicesPool(totalQuestions);
+    }
+    const index = queue.shift();
+    if (!seen.has(index)) {
+      seen.add(index);
+      result.push(index);
+    }
+  }
+
+  saveSharedQuestionQueue(category, subCategory, totalQuestions, queue);
+  return result;
 }
 
 async function createDuelRoom({ category, subCategory, questionCount }) {
@@ -47,7 +99,7 @@ async function createDuelRoom({ category, subCategory, questionCount }) {
     hostId: uid,
     guestId: null,
     currentQuestionIndex: 0,
-    questionIds: shuffledDuelIndices(questionCount, Math.min(DUEL_QUESTION_COUNT, questionCount)),
+    questionIds: drawDuelQuestionIndices(category, subCategory, questionCount, DUEL_QUESTION_COUNT),
     players: {
       [uid]: { name: profile.name, avatar: profile.avatar, score: 0, lastAnsweredIndex: -1 },
     },
