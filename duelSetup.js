@@ -45,13 +45,48 @@ function openDuelSetupModal() {
 
 function renderDuelChoiceStep() {
   clearDuelSetupError();
-  document.getElementById('duelSetupHint').textContent = 'צרו חדר חדש או הצטרפו עם קוד מחבר';
+  document.getElementById('duelSetupHint').textContent = 'בחרו איך להתחיל';
   document.getElementById('duelSetupBody').innerHTML = `
+    <button id="duelQuickMatchChoice" class="profile-modal__start-button duel-setup__option" type="button">קרב מהיר מול יריב אקראי</button>
     <button id="duelCreateChoice" class="profile-modal__start-button duel-setup__option" type="button">צור חדר חדש</button>
     <button id="duelJoinChoice" class="profile-modal__start-button duel-setup__option" type="button">הצטרף עם קוד</button>
   `;
+  document.getElementById('duelQuickMatchChoice').addEventListener('click', handleQuickMatch);
   document.getElementById('duelCreateChoice').addEventListener('click', renderDuelCategoryStep);
   document.getElementById('duelJoinChoice').addEventListener('click', renderDuelJoinStep);
+}
+
+function pickRandomCategoryAndSubcategory(categoryData) {
+  const categoryKeys = Object.keys(categoryData);
+  const categoryKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
+  const subKeys = Object.keys(categoryData[categoryKey].subcategories);
+  const subKey = subKeys[Math.floor(Math.random() * subKeys.length)];
+  return { categoryKey, subKey, questionCount: categoryData[categoryKey].subcategories[subKey].questions.length };
+}
+
+async function handleQuickMatch() {
+  clearDuelSetupError();
+  document.getElementById('duelSetupHint').textContent = 'מחפשים יריב...';
+  document.getElementById('duelSetupBody').innerHTML = '';
+
+  try {
+    const joinedRoomCode = await findAndJoinQuickMatch();
+    if (joinedRoomCode) {
+      window.location.href = `duelPageTrivia.html?room=${joinedRoomCode}`;
+      return;
+    }
+
+    if (!duelCategoryDataCache) {
+      const response = await fetch('questions.json');
+      duelCategoryDataCache = await response.json();
+    }
+    const { categoryKey, subKey, questionCount } = pickRandomCategoryAndSubcategory(duelCategoryDataCache);
+    const roomCode = await createDuelRoom({ category: categoryKey, subCategory: subKey, questionCount });
+    window.location.href = `duelPageTrivia.html?room=${roomCode}`;
+  } catch (err) {
+    showDuelSetupError('לא הצלחנו למצוא או ליצור קרב. נסו שוב.');
+    renderDuelChoiceStep();
+  }
 }
 
 async function renderDuelCategoryStep() {

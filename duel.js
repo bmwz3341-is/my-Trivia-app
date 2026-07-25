@@ -2,6 +2,7 @@ const DUEL_COLLECTION = 'duels';
 const DUEL_ROOM_CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const DUEL_ROOM_CODE_LENGTH = 5;
 const DUEL_QUESTION_COUNT = 8;
+const DUEL_ROOM_TTL_HOURS = 24;
 
 function duelDocRef(roomCode) {
   return firebase.firestore().collection(DUEL_COLLECTION).doc(roomCode);
@@ -42,6 +43,7 @@ async function createDuelRoom({ category, subCategory, questionCount }) {
     category,
     subCategory,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    expiresAt: firebase.firestore.Timestamp.fromMillis(Date.now() + DUEL_ROOM_TTL_HOURS * 60 * 60 * 1000),
     hostId: uid,
     guestId: null,
     currentQuestionIndex: 0,
@@ -75,6 +77,25 @@ async function joinDuelRoom(rawCode) {
   });
 
   return roomCode;
+}
+
+async function findAndJoinQuickMatch() {
+  const uid = await ensurePlayerAuth();
+  const snapshot = await firebase.firestore()
+    .collection(DUEL_COLLECTION)
+    .where('status', '==', 'waiting')
+    .limit(5)
+    .get();
+
+  for (const doc of snapshot.docs) {
+    if (doc.data().hostId === uid) continue;
+    try {
+      return await joinDuelRoom(doc.id);
+    } catch (err) {
+      // Room was taken or became invalid between the query and the join attempt - try the next candidate.
+    }
+  }
+  return null;
 }
 
 function watchDuelRoom(roomCode, onChange) {

@@ -64,7 +64,7 @@ body {
   font-size: 1.1rem;
 }
 
-.leaderboard-list--full {
+.leaderboard-list.leaderboard-list--full {
   width: 100%;
   max-width: 720px;
   max-height: none;
