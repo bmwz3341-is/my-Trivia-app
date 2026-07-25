@@ -78,3 +78,15 @@ async function renderLeaderboard(container, { highlightId, collectionName = LEAD
     }
   }
 }
+
+function truncateText(text, maxLength = 34) {
+  return text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text;
+}
+
+function triggerLeaderboardButtonBlink(buttonId) {
+  const button = document.getElementById(buttonId);
+  if (!button) return;
+  button.classList.remove('leaderboard-nav-button--blink');
+  void button.offsetWidth;
+  button.classList.add('leaderboard-nav-button--blink');
+}

@@ -16,7 +16,10 @@ async function initLeaderboardPage() {
     switchLeaderboardTab(DUEL_LEADERBOARD_COLLECTION);
   });
 
-  await loadLeaderboardTab(LEADERBOARD_COLLECTION);
+  const initialTab = new URLSearchParams(window.location.search).get('tab') === 'duel'
+    ? DUEL_LEADERBOARD_COLLECTION
+    : LEADERBOARD_COLLECTION;
+  await switchLeaderboardTab(initialTab);
 }
 
 async function switchLeaderboardTab(collectionName) {

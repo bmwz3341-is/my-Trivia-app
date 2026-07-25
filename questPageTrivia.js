@@ -334,10 +334,6 @@ function handleNextClick() {
   renderQuestion();
 }
 
-function truncateText(text, maxLength = 34) {
-  return text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text;
-}
-
 function renderResultHistory() {
   const list = document.getElementById('resultHistoryList');
   list.innerHTML = '';
@@ -374,15 +370,7 @@ function showResultScreen(poolExhausted = false) {
 
   renderResultHistory();
   recordAndRenderLeaderboard();
-  triggerLeaderboardButtonBlink();
-}
-
-function triggerLeaderboardButtonBlink() {
-  const button = document.getElementById('leaderboardButton');
-  if (!button) return;
-  button.classList.remove('leaderboard-nav-button--blink');
-  void button.offsetWidth;
-  button.classList.add('leaderboard-nav-button--blink');
+  triggerLeaderboardButtonBlink('leaderboardButton');
 }
 
 async function recordAndRenderLeaderboard() {
