@@ -15,6 +15,7 @@ const duelState = {
   unsubscribe: null,
   lastRenderedIndex: -1,
   answeredThisQuestion: false,
+  lastAdvanceAttemptIndex: -1,
   finished: false,
 };
 
@@ -52,6 +53,20 @@ async function initDuelPage() {
 }
 
 function handleDuelSnapshot(data) {
+  try {
+    handleDuelSnapshotUnsafe(data);
+  } catch (err) {
+    console.error('Duel render failed:', err);
+    document.getElementById('duelQuestionCard').hidden = true;
+    document.getElementById('duelAnswersGrid').hidden = true;
+    document.getElementById('duelWaitingForOpponent').hidden = true;
+    document.getElementById('duelWaitingScreen').hidden = false;
+    document.querySelector('.duel-waiting__title').textContent = 'משהו השתבש בהצגת הקרב';
+    document.querySelector('.duel-waiting__hint').textContent = 'רעננו את העמוד כדי לנסות שוב';
+  }
+}
+
+function handleDuelSnapshotUnsafe(data) {
   if (!data) {
     window.location.href = 'index.html';
     return;
@@ -70,7 +85,7 @@ function handleDuelSnapshot(data) {
     if (!duelState.finished) {
       duelState.finished = true;
       stopDuelTimer();
-      showDuelResult(data);
+      showDuelResult(data).catch((err) => console.error('Duel result render failed:', err));
     }
     return;
   }
@@ -133,8 +148,10 @@ function renderDuelQuestion(data) {
 
     const players = Object.values(data.players || {});
     const bothAnswered = players.length === 2 && players.every((p) => p.lastAnsweredIndex >= index);
-    if (bothAnswered) {
-      // Safety net: retry a previously-failed advance without ever touching the submit path.
+    if (bothAnswered && duelState.lastAdvanceAttemptIndex !== index) {
+      // Safety net: retry a previously-failed advance, at most once per question,
+      // without ever touching the submit path.
+      duelState.lastAdvanceAttemptIndex = index;
       advanceDuelIfReady(duelState.roomCode, index, totalQuestions).catch(() => {});
     }
     return;
@@ -258,6 +275,12 @@ async function showDuelResult(data) {
   const opponentId = data.hostId === duelState.uid ? data.guestId : data.hostId;
   const opponent = opponentId ? data.players[opponentId] : null;
 
+  if (!me) {
+    document.getElementById('duelResultTitle').textContent = 'הקרב הסתיים';
+    document.getElementById('duelResultScore').textContent = '';
+    return;
+  }
+
   let title = 'תיקו!';
   if (opponent && me.score > opponent.score) title = 'ניצחתם! 🏆';
   else if (opponent && me.score < opponent.score) title = 'הפסדתם';
@@ -267,7 +290,7 @@ async function showDuelResult(data) {
     ? `${me.score} - ${opponent.score}`
     : `צברתם ${me.score} נקודות`;
 
-  if (me) {
+  try {
     await addLeaderboardEntry({
       playerId: getOrCreatePlayerId(),
       name: me.name,
@@ -275,6 +298,8 @@ async function showDuelResult(data) {
       score: me.score,
       category: 'קרב ראש-בראש',
     });
+  } catch (err) {
+    console.error('Failed to record duel result on leaderboard:', err);
   }
 }
 
