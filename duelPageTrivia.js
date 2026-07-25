@@ -218,8 +218,19 @@ async function handleDuelAnswerClick(selectedIndex, correctIndex, questionIndex,
     points = tier ? tier.points : 0;
   }
 
-  await submitDuelAnswer(duelState.roomCode, duelState.uid, questionIndex, points);
-  await advanceDuelIfReady(duelState.roomCode, questionIndex, totalQuestions);
+  try {
+    await submitDuelAnswer(duelState.roomCode, duelState.uid, questionIndex, points);
+    await advanceDuelIfReady(duelState.roomCode, questionIndex, totalQuestions);
+  } catch (err) {
+    duelState.answeredThisQuestion = false;
+    buttons.forEach((btn) => {
+      btn.disabled = false;
+      btn.classList.remove('answer-button--correct', 'answer-button--wrong');
+      const icon = btn.querySelector('.answer-button__icon');
+      if (icon) icon.textContent = '';
+    });
+    startDuelTimer(questionIndex, totalQuestions, correctIndex);
+  }
 }
 
 async function showDuelResult(data) {

@@ -97,17 +97,21 @@ async function submitDuelAnswer(roomCode, uid, questionIndex, points) {
 
 async function advanceDuelIfReady(roomCode, questionIndex, totalQuestions) {
   const docRef = duelDocRef(roomCode);
-  await firebase.firestore().runTransaction(async (tx) => {
-    const doc = await tx.get(docRef);
-    if (!doc.exists) return;
-    const data = doc.data();
-    if (data.currentQuestionIndex !== questionIndex) return;
+  try {
+    await firebase.firestore().runTransaction(async (tx) => {
+      const doc = await tx.get(docRef);
+      if (!doc.exists) return;
+      const data = doc.data();
+      if (data.status !== 'active' || data.currentQuestionIndex !== questionIndex) return;
 
-    const players = Object.values(data.players || {});
-    const bothAnswered = players.length === 2 && players.every((p) => p.lastAnsweredIndex >= questionIndex);
-    if (!bothAnswered) return;
+      const players = Object.values(data.players || {});
+      const bothAnswered = players.length === 2 && players.every((p) => p.lastAnsweredIndex >= questionIndex);
+      if (!bothAnswered) return;
 
-    const isLast = questionIndex + 1 >= totalQuestions;
-    tx.update(docRef, isLast ? { status: 'finished' } : { currentQuestionIndex: questionIndex + 1 });
-  });
+      const isLast = questionIndex + 1 >= totalQuestions;
+      tx.update(docRef, isLast ? { status: 'finished' } : { currentQuestionIndex: questionIndex + 1 });
+    });
+  } catch (err) {
+    if (err.code !== 'permission-denied') throw err;
+  }
 }
