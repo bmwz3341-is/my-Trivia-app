@@ -269,7 +269,9 @@ async function showDuelResult(data) {
   document.getElementById('duelQuestionCard').hidden = true;
   document.getElementById('duelAnswersGrid').hidden = true;
   document.getElementById('duelWaitingForOpponent').hidden = true;
-  document.getElementById('duelResultScreen').hidden = false;
+  const resultScreen = document.getElementById('duelResultScreen');
+  resultScreen.hidden = false;
+  requestAnimationFrame(() => resultScreen.classList.add('result-screen--visible'));
 
   const me = getMyPlayer(data);
   const opponentId = data.hostId === duelState.uid ? data.guestId : data.hostId;
