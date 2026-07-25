@@ -130,6 +130,13 @@ function renderDuelQuestion(data) {
     document.getElementById('duelAnswersGrid').hidden = true;
     document.getElementById('duelWaitingForOpponent').hidden = false;
     stopDuelTimer();
+
+    const players = Object.values(data.players || {});
+    const bothAnswered = players.length === 2 && players.every((p) => p.lastAnsweredIndex >= index);
+    if (bothAnswered) {
+      // Safety net: retry a previously-failed advance without ever touching the submit path.
+      advanceDuelIfReady(duelState.roomCode, index, totalQuestions).catch(() => {});
+    }
     return;
   }
 
@@ -220,8 +227,8 @@ async function handleDuelAnswerClick(selectedIndex, correctIndex, questionIndex,
 
   try {
     await submitDuelAnswer(duelState.roomCode, duelState.uid, questionIndex, points);
-    await advanceDuelIfReady(duelState.roomCode, questionIndex, totalQuestions);
   } catch (err) {
+    // The answer was never recorded, so it's safe to let the player try again.
     duelState.answeredThisQuestion = false;
     buttons.forEach((btn) => {
       btn.disabled = false;
@@ -230,6 +237,14 @@ async function handleDuelAnswerClick(selectedIndex, correctIndex, questionIndex,
       if (icon) icon.textContent = '';
     });
     startDuelTimer(questionIndex, totalQuestions, correctIndex);
+    return;
+  }
+
+  try {
+    await advanceDuelIfReady(duelState.roomCode, questionIndex, totalQuestions);
+  } catch (err) {
+    // The answer is already recorded; if this fails, the opponent's own
+    // submit will trigger the advance instead. Never retry the submit here.
   }
 }
 
