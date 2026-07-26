@@ -103,11 +103,14 @@ body {
 }
 
 .card__title {
-  margin-top: 6px;
+  margin-top: 30px;
   text-align: center;
   color: #141110;
-  font-size: 16px;
+  font-size: 21px;
   font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card__rows {
@@ -142,14 +145,14 @@ body {
 
 .sub-category-row__label {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 17px;
   color: #141110;
 }
 
 .sub-category-row__count {
   color: #FF3D81;
   font-weight: 800;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .sub-screen__hint {
