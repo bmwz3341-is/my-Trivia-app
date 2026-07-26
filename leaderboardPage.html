@@ -4,18 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טריוויה - לוח תוצאות</title>
-  <link rel="stylesheet" href="leaderboardPage.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="questPageTrivia.css">
   <link rel="stylesheet" href="profileLeaderboard.css">
+  <link rel="stylesheet" href="leaderboardPage.css">
 </head>
 <body>
 
   <div id="leaderboardPlayerBadgeContainer" class="player-badge-slot"></div>
 
   <main class="leaderboard-screen">
-    <header class="leaderboard-header">
-      <button id="backButton" class="back-button" type="button" aria-label="חזרה">→</button>
-      <h1 class="leaderboard-title">לוח תוצאות גלובלי</h1>
-    </header>
+    <button id="backButton" class="back-button" type="button" aria-label="חזרה">→</button>
+
+    <section id="questResultSection" class="result-screen" hidden>
+      <div class="result-mode-chip-row">
+        <span class="result-mode-chip">מחשב 🤖</span>
+      </div>
+      <div class="result-card-stack">
+        <div class="result-card-stack__back result-card-stack__back--dark" aria-hidden="true"></div>
+        <div class="result-card-stack__back result-card-stack__back--yellow" aria-hidden="true"></div>
+        <div class="result-card">
+          <h2 id="resultTitle" class="result-title">סיימתם!</h2>
+          <div class="result-card__chip-row">
+            <span class="result-card__chip">🤖 מחשב</span>
+          </div>
+          <p id="resultScore" class="result-score"></p>
+          <p id="resultAccuracy" class="result-accuracy"></p>
+          <ul id="resultHistoryList" class="result-history-list"></ul>
+          <p id="leaderboardRankInfo" class="result-rank-info"></p>
+          <button id="restartButton" class="result-button" type="button">שחקו שוב</button>
+          <button id="homeButton" class="result-button result-button--ghost" type="button">חזרה למסך הבית</button>
+        </div>
+      </div>
+    </section>
+
+    <h1 class="leaderboard-title">לוח תוצאות גלובלי</h1>
 
     <div class="leaderboard-tabs" role="tablist">
       <button id="leaderboardTabGeneral" class="leaderboard-tab leaderboard-tab--active" type="button" role="tab" aria-selected="true">כללי</button>

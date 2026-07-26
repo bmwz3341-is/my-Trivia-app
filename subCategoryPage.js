@@ -1,5 +1,12 @@
 let CATEGORY_DATA = {};
 
+const THEME_CORNER = {
+  purple: { rank: 'A', suit: '♠' },
+  teal: { rank: 'K', suit: '♦' },
+  orange: { rank: 'Q', suit: '♣' },
+  green: { rank: 'J', suit: '♥' },
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initSubCategoryPage();
 });
@@ -18,7 +25,13 @@ async function initSubCategoryPage() {
 
   const categoryData = CATEGORY_DATA[category];
 
+  document.title = `טריוויה - ${categoryData.title}`;
   document.getElementById('mainCategoryTitle').textContent = categoryData.title;
+
+  const corner = THEME_CORNER[categoryData.theme] || THEME_CORNER.purple;
+  document.getElementById('cornerRank').textContent = corner.rank;
+  document.getElementById('cornerSuit').textContent = corner.suit;
+
   document.getElementById('backButton').addEventListener('click', () => {
     window.location.href = 'index.html';
   });
@@ -27,20 +40,22 @@ async function initSubCategoryPage() {
 }
 
 function renderSubCategories(category, categoryData) {
-  const grid = document.getElementById('subCategoryGrid');
-  grid.innerHTML = '';
+  const rows = document.getElementById('subCategoryRows');
+  rows.innerHTML = '';
 
   Object.entries(categoryData.subcategories).forEach(([subKey, sub]) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = `sub-category-card sub-category-card--${categoryData.theme}`;
-    button.innerHTML = `
-      <span class="sub-category-card__title">${sub.title}</span>
-      <span class="sub-category-card__tag">${sub.questions.length} שאלות</span>
+    const count = sub.questions.length;
+
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'sub-category-row';
+    row.innerHTML = `
+      <span class="sub-category-row__label">${sub.title}</span>
+      <span class="sub-category-row__count">${count}</span>
     `;
-    button.addEventListener('click', () => {
-      window.location.href = `questPageTrivia.html?category=${category}&sub=${subKey}`;
+    row.addEventListener('click', () => {
+      window.location.href = `questPageTrivia.html?category=${category}&sub=${subKey}&count=${count}`;
     });
-    grid.appendChild(button);
+    rows.appendChild(row);
   });
 }

@@ -183,9 +183,6 @@ function renderDuelQuestion(data) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'answer-button';
-    if (isTrueFalse) {
-      button.classList.add(optIndex === 0 ? 'answer-button--true-option' : 'answer-button--false-option');
-    }
     button.innerHTML = `<span>${optionText}</span><span class="answer-button__icon"></span>`;
     button.addEventListener('click', () => handleDuelAnswerClick(optIndex, question.correct, index, totalQuestions, question.text));
     answersGrid.appendChild(button);

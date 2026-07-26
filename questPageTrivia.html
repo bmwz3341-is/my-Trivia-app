@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טריוויה - שאלות</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="questPageTrivia.css">
   <link rel="stylesheet" href="profileLeaderboard.css">
 </head>
@@ -12,76 +14,47 @@
   <div id="questPlayerBadgeContainer" class="player-badge-slot"></div>
 
   <main class="quest-screen">
+    <button id="backButton" class="back-button" type="button" aria-label="חזרה">→</button>
+
     <header class="quest-header">
-      <button id="backButton" class="back-button" type="button" aria-label="חזרה">→</button>
-      <div class="quest-header__info">
+      <button id="scoreInfoButton" class="score-info-button" type="button" aria-label="איך עובד הניקוד?">?</button>
+      <div class="quest-header__category">
         <h2 id="categoryTitle" class="category-title">טריוויה</h2>
-      </div>
-      <div class="header-score-group">
-        <span id="scoreBadge" class="score-badge">0 נק'</span>
-        <button id="scoreInfoButton" class="score-info-button" type="button" aria-label="איך עובד הניקוד?">?</button>
+        <span class="category-icon" aria-hidden="true">🧩</span>
       </div>
     </header>
 
     <div id="globalTimerCard" class="global-timer">
       <svg class="global-timer__ring" viewBox="0 0 100 100" aria-hidden="true">
-        <defs>
-          <linearGradient id="globalTimerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffc93c"/>
-            <stop offset="100%" stop-color="#ffa724"/>
-          </linearGradient>
-        </defs>
         <circle class="global-timer__ring-bg" cx="50" cy="50" r="42"/>
         <circle id="globalTimerRing" class="global-timer__ring-progress" cx="50" cy="50" r="42"/>
       </svg>
       <div class="global-timer__center">
         <span id="globalTimerBadge" class="global-timer__time">1:30</span>
-        <span class="global-timer__label">זמן המשחק</span>
       </div>
+    </div>
+
+    <div class="score-row">
+      <span id="scoreBadge" class="score-badge">0 נק'</span>
     </div>
 
     <div class="progress-track">
       <div id="progressFill" class="progress-fill"></div>
     </div>
 
-    <section id="questionCard" class="question-card">
-      <p id="questionText" class="question-text">טוען שאלה...</p>
-      <div id="timerCard" class="timer-card timer-card--question">
-        <svg class="timer-card__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="12" cy="13" r="8" stroke="currentColor" stroke-width="2"/>
-          <path d="M12 9v4l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M12 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <div class="timer-card__text">
-          <span class="timer-card__label">לשאלה</span>
+    <div class="card-stack">
+      <div class="card-stack__back card-stack__back--dark" aria-hidden="true"></div>
+      <div class="card-stack__back card-stack__back--yellow" aria-hidden="true"></div>
+      <section id="questionCard" class="question-card">
+        <p id="questionText" class="question-text">טוען שאלה...</p>
+        <div id="timerCard" class="timer-card">
+          <span class="timer-card__icon" aria-hidden="true">⏱</span>
           <span id="timerBadge" class="timer-card__number">20</span>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
     <section id="answersGrid" class="answers-grid"></section>
-
-    <section id="resultScreen" class="result-screen" hidden>
-      <div class="result-title-row">
-        <h2 id="resultTitle" class="result-title">סיימתם!</h2>
-        <button id="leaderboardButton" class="leaderboard-nav-button leaderboard-nav-button--compact" type="button">
-          <span>🏆</span>
-          <span>לוח תוצאות</span>
-        </button>
-      </div>
-      <div id="resultPlayerBadgeContainer" class="result-player-badge"></div>
-      <p id="resultScore" class="result-score"></p>
-      <p id="resultAccuracy" class="result-accuracy"></p>
-      <ul id="resultHistoryList" class="result-history-list"></ul>
-
-      <section class="leaderboard-section">
-        <p id="leaderboardRankInfo" class="leaderboard-section__rank-info"></p>
-      </section>
-
-      <button id="restartButton" class="result-button" type="button">שחקו שוב</button>
-      <button id="homeButton" class="result-button result-button--ghost" type="button">חזרה למסך הבית</button>
-    </section>
 
     <div id="scoreInfoOverlay" class="modal-overlay" hidden>
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="scoreInfoTitle">

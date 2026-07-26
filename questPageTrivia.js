@@ -69,14 +69,6 @@ async function initQuestPage() {
   document.getElementById('backButton').addEventListener('click', () => {
     window.location.href = `subCategoryPage.html?category=${state.category}`;
   });
-  document.getElementById('restartButton').addEventListener('click', restartQuiz);
-  document.getElementById('leaderboardButton').addEventListener('click', () => {
-    window.location.href = 'leaderboardPage.html';
-  });
-  document.getElementById('homeButton').addEventListener('click', () => {
-    window.location.href = 'index.html';
-  });
-
   const scoreInfoOverlay = document.getElementById('scoreInfoOverlay');
   document.getElementById('scoreInfoButton').addEventListener('click', () => {
     scoreInfoOverlay.hidden = false;
@@ -169,9 +161,6 @@ function renderQuestion() {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'answer-button';
-    if (isTrueFalse) {
-      button.classList.add(index === 0 ? 'answer-button--true-option' : 'answer-button--false-option');
-    }
     button.innerHTML = `<span>${optionText}</span><span class="answer-button__icon"></span>`;
     button.addEventListener('click', () => handleAnswerClick(index, button, currentRenderId));
     answersGrid.appendChild(button);
@@ -264,7 +253,6 @@ function updateGlobalTimerDisplay() {
 }
 
 function resumeTimers() {
-  if (document.getElementById('resultScreen').hidden === false) return;
   if (!state.answered) startTimer(false);
   startGlobalTimer(false);
 }
@@ -334,50 +322,23 @@ function handleNextClick() {
   renderQuestion();
 }
 
-function renderResultHistory() {
-  const list = document.getElementById('resultHistoryList');
-  list.innerHTML = '';
-
-  state.history.forEach((entry, index) => {
-    const item = document.createElement('li');
-    item.className = `result-history-item ${entry.isCorrect ? 'result-history-item--correct' : 'result-history-item--wrong'}`;
-    const timeLabel = entry.timedOut ? '⏰ לא הספקתם' : `⏱️ ${entry.elapsed.toFixed(1)} שנ׳`;
-    item.innerHTML = `
-      <span class="result-history-item__icon">${entry.isCorrect ? '✔' : '✘'}</span>
-      <span class="result-history-item__text">${index + 1}. ${truncateText(entry.text)}</span>
-      <span class="result-history-item__time">${timeLabel}</span>
-    `;
-    list.appendChild(item);
-  });
-}
-
-function showResultScreen(poolExhausted = false) {
+async function showResultScreen(poolExhausted = false) {
   stopTimer();
   stopGlobalTimer();
 
-  document.getElementById('questionCard').hidden = true;
-  document.getElementById('answersGrid').hidden = true;
-
-  const resultScreen = document.getElementById('resultScreen');
-  resultScreen.hidden = false;
-  requestAnimationFrame(() => resultScreen.classList.add('result-screen--visible'));
-  document.getElementById('resultTitle').textContent = poolExhausted ? 'עניתם על כל השאלות!' : 'הזמן נגמר!';
-
   const correctCount = state.history.filter(entry => entry.isCorrect).length;
-  document.getElementById('resultScore').textContent = `צברתם ${state.score} נקודות`;
-  document.getElementById('resultAccuracy').textContent =
-    `הצלחתם לענות נכון על ${correctCount} מתוך ${state.answeredCount} שאלות שנענו`;
-
-  renderResultHistory();
-  recordAndRenderLeaderboard();
-  triggerLeaderboardButtonBlink('leaderboardButton');
-}
-
-async function recordAndRenderLeaderboard() {
   const profile = getPlayerProfile() || { name: 'אורח', avatar: '🙂' };
   const categoryTitle = CATEGORY_DATA[state.category] ? CATEGORY_DATA[state.category].title : state.category;
 
-  renderPlayerBadge(document.getElementById('resultPlayerBadgeContainer'), { profile });
+  const result = {
+    title: poolExhausted ? 'עניתם על כל השאלות!' : 'הזמן נגמר!',
+    scoreText: `צברתם ${state.score} נקודות`,
+    accuracyText: `הצלחתם לענות נכון על ${correctCount} מתוך ${state.answeredCount} שאלות שנענו`,
+    history: state.history,
+    category: state.category,
+    subCategory: state.subCategory,
+    rankInfo: '',
+  };
 
   try {
     const { rank, total } = await addLeaderboardEntry({
@@ -387,26 +348,17 @@ async function recordAndRenderLeaderboard() {
       score: state.score,
       category: categoryTitle,
     });
-
-    document.getElementById('leaderboardRankInfo').textContent = `המיקום שלכם בלוח התוצאות: #${rank} מתוך ${total}`;
+    result.rankInfo = `המיקום שלכם בלוח התוצאות: #${rank} מתוך ${total}`;
   } catch (err) {
     console.error('Leaderboard error:', err.code || '', err.message || err);
-    document.getElementById('leaderboardRankInfo').textContent = 'לא ניתן היה לטעון את לוח התוצאות כרגע';
+    result.rankInfo = 'לא ניתן היה לטעון את לוח התוצאות כרגע';
   }
-}
 
-function restartQuiz() {
-  state.history = [];
-  state.currentIndex = pickNextOrResetIndex();
-  state.score = 0;
-  state.answeredCount = 0;
+  try {
+    sessionStorage.setItem('triviaLastResult', JSON.stringify(result));
+  } catch (err) {
+    // ignore storage failures (e.g. private browsing quota)
+  }
 
-  document.getElementById('questionCard').hidden = false;
-  document.getElementById('answersGrid').hidden = false;
-  const resultScreen = document.getElementById('resultScreen');
-  resultScreen.hidden = true;
-  resultScreen.classList.remove('result-screen--visible');
-
-  startGlobalTimer();
-  renderQuestion();
+  window.location.href = 'leaderboardPage.html';
 }
