@@ -34,6 +34,7 @@ button {
   font-weight: 900;
   font-size: 34px;
   text-align: left;
+  margin-top: 40px;
 }
 
 .app-subtitle {
@@ -53,7 +54,7 @@ button {
 }
 
 .quick-game-button {
-  margin-top: 100px;
+  margin-top: 40px;
   display: flex;
   align-items: baseline;
   justify-content: center;

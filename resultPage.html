@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טריוויה - התוצאות שלך</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="questPageTrivia.css">
+  <link rel="stylesheet" href="profileLeaderboard.css">
+  <style>
+    #resultPlayerBadgeContainer.result-player-badge {
+      margin-top: 70px;
+    }
+
+    #leaderboardNavButton.leaderboard-nav-button--compact {
+      font-size: 22px;
+      padding: 12px 22px;
+    }
+
+    #leaderboardNavButton.leaderboard-nav-button--blink {
+      animation: leaderboard-nav-blink 0.5s ease-in-out 100;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="quest-screen">
+    <section id="questResultScreen" class="result-screen">
+      <div class="result-title-row">
+        <h2 id="resultTitle" class="result-title"></h2>
+        <button id="leaderboardNavButton" class="leaderboard-nav-button leaderboard-nav-button--compact" type="button">
+          <span>🏆</span>
+          <span>לוח תוצאות</span>
+        </button>
+      </div>
+      <div id="resultPlayerBadgeContainer" class="result-player-badge"></div>
+      <p id="resultScore" class="result-score"></p>
+      <p id="resultAccuracy" class="result-accuracy"></p>
+      <ul id="resultHistoryList" class="result-history-list"></ul>
+
+      <section class="leaderboard-section">
+        <p id="leaderboardRankInfo" class="leaderboard-section__rank-info"></p>
+      </section>
+
+      <button id="restartButton" class="result-button" type="button">שחקו שוב</button>
+      <button id="homeButton" class="result-button result-button--ghost" type="button">חזרה למסך הבית</button>
+    </section>
+  </main>
+
+  <script src="playerProfile.js"></script>
+  <script src="leaderboard.js"></script>
+  <script src="resultPage.js"></script>
+</body>
+</html>

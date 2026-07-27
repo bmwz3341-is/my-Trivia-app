@@ -133,6 +133,102 @@
   margin-top: 12px;
 }
 
+/* Head-to-head category select — "cards in a box" */
+.h2h-cardbox-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.h2h-cardbox {
+  position: relative;
+  width: 100%;
+  background: #141110;
+  border-radius: 18px;
+  padding: 22px 14px 18px;
+  box-sizing: border-box;
+  box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.7), inset 0 2px 0 rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.h2h-cardbox::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: -10px;
+  height: 20px;
+  background: #0a0808;
+  border-radius: 10px 10px 0 0;
+}
+
+.h2h-cardbox-shadow {
+  width: 70%;
+  height: 14px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.35), transparent 70%);
+  margin-top: -4px;
+}
+
+.h2h-card {
+  border: none;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  width: 100%;
+  text-align: right;
+  font-family: inherit;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.h2h-card:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 0 3px #22d3ee, 0 2px 8px -4px rgba(0, 0, 0, 0.5);
+}
+
+.h2h-card__rank {
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.h2h-card__suit {
+  font-size: 11px;
+}
+
+.h2h-card__title {
+  font-weight: 800;
+  font-size: 14px;
+  flex: 1;
+  text-align: right;
+}
+
+@media (max-width: 380px) {
+  .h2h-cardbox {
+    padding: 18px 10px 14px;
+    max-height: 300px;
+  }
+  .h2h-card {
+    padding: 12px 12px;
+    gap: 10px;
+  }
+  .h2h-card__title {
+    font-size: 13px;
+  }
+}
+
 /* Player badge (home corner + in-game header + result screen) */
 
 .player-badge-slot {

@@ -360,5 +360,5 @@ async function showResultScreen(poolExhausted = false) {
     // ignore storage failures (e.g. private browsing quota)
   }
 
-  window.location.href = 'leaderboardPage.html';
+  window.location.href = 'resultPage.html';
 }

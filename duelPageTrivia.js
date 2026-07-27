@@ -36,7 +36,6 @@ async function initDuelPage() {
   }
 
   duelState.roomCode = roomCode;
-  document.getElementById('duelRoomCode').textContent = roomCode;
 
   document.getElementById('duelBackButton').addEventListener('click', () => {
     window.location.href = 'index.html';
@@ -65,8 +64,7 @@ function handleDuelSnapshot(data) {
     document.getElementById('duelAnswersGrid').hidden = true;
     document.getElementById('duelWaitingForOpponent').hidden = true;
     document.getElementById('duelWaitingScreen').hidden = false;
-    document.querySelector('.duel-waiting__title').textContent = 'משהו השתבש בהצגת הקרב';
-    document.querySelector('.duel-waiting__hint').textContent = 'רעננו את העמוד כדי לנסות שוב';
+    document.querySelector('.duel-waiting__title').textContent = 'משהו השתבש בהצגת הקרב, רעננו את העמוד כדי לנסות שוב';
   }
 }
 

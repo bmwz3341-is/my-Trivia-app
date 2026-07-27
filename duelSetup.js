@@ -1,5 +1,54 @@
 let duelCategoryDataCache = null;
 
+const H2H_CARD_STYLES = [
+  { bg: '#6A3FB5', text: '#fff', rank: 'Q', suit: '♣', suitColor: '#fff' },
+  { bg: '#3FAE6B', text: '#fff', rank: 'K', suit: '♦', suitColor: '#fff' },
+  { bg: '#F5EF1E', text: '#141110', rank: 'J', suit: '♠', suitColor: '#141110' },
+  { bg: '#fff', text: '#141110', rank: 'A', suit: '♥', suitColor: '#FF3D81' },
+];
+
+function buildH2HCardBox(items, getLabel, onSelect) {
+  const wrap = document.createElement('div');
+  wrap.className = 'h2h-cardbox-wrap';
+
+  const cardbox = document.createElement('div');
+  cardbox.className = 'h2h-cardbox';
+  wrap.appendChild(cardbox);
+
+  items.forEach((item, index) => {
+    const style = H2H_CARD_STYLES[index % H2H_CARD_STYLES.length];
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'h2h-card';
+    button.style.background = style.bg;
+    button.style.color = style.text;
+
+    const rank = document.createElement('span');
+    rank.className = 'h2h-card__rank';
+    rank.textContent = style.rank;
+    const suit = document.createElement('span');
+    suit.className = 'h2h-card__suit';
+    suit.style.color = style.suitColor;
+    suit.textContent = style.suit;
+    rank.appendChild(suit);
+
+    const title = document.createElement('span');
+    title.className = 'h2h-card__title';
+    title.textContent = getLabel(item);
+
+    button.appendChild(rank);
+    button.appendChild(title);
+    button.addEventListener('click', () => onSelect(item));
+    cardbox.appendChild(button);
+  });
+
+  const shadow = document.createElement('div');
+  shadow.className = 'h2h-cardbox-shadow';
+  wrap.appendChild(shadow);
+
+  return wrap;
+}
+
 function ensureDuelSetupModal() {
   if (document.getElementById('duelSetupOverlay')) return;
 
@@ -61,14 +110,14 @@ async function renderDuelCategoryStep() {
   document.getElementById('duelSetupHint').textContent = 'בחרו קטגוריה לקרב המהיר';
   const body = document.getElementById('duelSetupBody');
   body.innerHTML = '';
-  Object.entries(duelCategoryDataCache).forEach(([key, cat]) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'profile-modal__start-button duel-setup__option';
-    button.textContent = cat.title;
-    button.addEventListener('click', () => renderDuelSubCategoryStep(key, cat));
-    body.appendChild(button);
-  });
+
+  const categoryEntries = Object.entries(duelCategoryDataCache);
+  const box = buildH2HCardBox(
+    categoryEntries,
+    ([, cat]) => cat.title,
+    ([key, cat]) => renderDuelSubCategoryStep(key, cat)
+  );
+  body.appendChild(box);
 }
 
 function renderDuelSubCategoryStep(categoryKey, categoryData) {
@@ -76,14 +125,14 @@ function renderDuelSubCategoryStep(categoryKey, categoryData) {
   document.getElementById('duelSetupHint').textContent = 'בחרו תת-קטגוריה';
   const body = document.getElementById('duelSetupBody');
   body.innerHTML = '';
-  Object.entries(categoryData.subcategories).forEach(([subKey, sub]) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'profile-modal__start-button duel-setup__option';
-    button.textContent = `${sub.title} · ${sub.questions.length} שאלות`;
-    button.addEventListener('click', () => handleQuickMatch(categoryKey, subKey));
-    body.appendChild(button);
-  });
+
+  const subEntries = Object.entries(categoryData.subcategories);
+  const box = buildH2HCardBox(
+    subEntries,
+    ([, sub]) => `${sub.title} · ${sub.questions.length} שאלות`,
+    ([subKey]) => handleQuickMatch(categoryKey, subKey)
+  );
+  body.appendChild(box);
 }
 
 async function handleQuickMatch(categoryKey, subKey) {
