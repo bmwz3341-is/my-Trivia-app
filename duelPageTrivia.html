@@ -10,10 +10,14 @@
 </head>
 <body>
 
+  <div id="duelPlayerBadgeContainer" class="player-badge-slot"></div>
+
   <main class="quest-screen">
+    <button id="duelBackButton" class="back-button" type="button" aria-label="חזרה">→</button>
+
     <header class="quest-header">
-      <button id="duelBackButton" class="back-button" type="button" aria-label="חזרה">→</button>
-      <div class="quest-header__info">
+      <button id="duelScoreInfoButton" class="score-info-button" type="button" aria-label="איך עובד הניקוד?">?</button>
+      <div class="quest-header__category">
         <h2 id="duelCategoryTitle" class="category-title">קרב ראש-בראש</h2>
       </div>
     </header>
@@ -60,25 +64,34 @@
 
     <p id="duelWaitingForOpponent" class="duel-waiting-opponent" hidden>ממתינים לתשובת היריב...</p>
 
-    <section id="duelResultScreen" class="result-screen" hidden>
-      <div class="result-title-row">
-        <h2 id="duelResultTitle" class="result-title">הקרב הסתיים!</h2>
-        <button id="duelLeaderboardButton" class="leaderboard-nav-button leaderboard-nav-button--compact" type="button">
-          <span>🏆</span>
-          <span>לוח תוצאות</span>
-        </button>
+    <div id="duelScoreInfoOverlay" class="modal-overlay" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="duelScoreInfoTitle">
+        <h3 id="duelScoreInfoTitle" class="modal__title">איך עובד הניקוד?</h3>
+        <ul class="score-info-list">
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">⚡ 0–3 שניות (מהיר במיוחד)</span>
+            <span class="score-info-list__points">15 נק'</span>
+          </li>
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">🚀 4–6 שניות (מהיר)</span>
+            <span class="score-info-list__points">12 נק'</span>
+          </li>
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">👍 7–10 שניות (רגיל)</span>
+            <span class="score-info-list__points">10 נק'</span>
+          </li>
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">⏳ 11–15 שניות (איטי)</span>
+            <span class="score-info-list__points">7 נק'</span>
+          </li>
+          <li class="score-info-list__item score-info-list__item--zero">
+            <span class="score-info-list__label">❌ תשובה שגויה / נגמר הזמן</span>
+            <span class="score-info-list__points">0 נק'</span>
+          </li>
+        </ul>
+        <button id="duelScoreInfoCloseButton" class="modal-close-button" type="button">הבנתי!</button>
       </div>
-      <div id="duelResultPlayerBadgeContainer" class="result-player-badge"></div>
-      <p id="duelResultScore" class="result-score"></p>
-      <p id="duelResultAccuracy" class="result-accuracy"></p>
-      <ul id="duelResultHistoryList" class="result-history-list"></ul>
-
-      <section class="leaderboard-section">
-        <p id="duelLeaderboardRankInfo" class="leaderboard-section__rank-info"></p>
-      </section>
-
-      <button id="duelHomeButton" class="result-button" type="button">חזרה למסך הבית</button>
-    </section>
+    </div>
   </main>
 
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -87,6 +100,7 @@
   <script src="firebaseConfig.js"></script>
   <script src="playerProfile.js"></script>
   <script src="leaderboard.js"></script>
+  <script src="soundEffects.js"></script>
   <script src="duel.js"></script>
   <script src="duelPageTrivia.js"></script>
 </body>

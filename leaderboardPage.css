@@ -73,7 +73,7 @@ body {
   background: transparent;
   color: #ffffff;
   font-weight: 800;
-  font-size: 13px;
+  font-size: 17px;
   text-align: center;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -117,9 +117,19 @@ body {
   background: rgba(34, 211, 238, 0.18);
 }
 
-.leaderboard-list--full .leaderboard-item__avatar,
 .leaderboard-list--full .leaderboard-item__category {
   display: none;
+}
+
+.leaderboard-list--full .leaderboard-item__avatar {
+  order: 2;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.leaderboard-list--full .leaderboard-item__avatar .avatar-emoji {
+  font-size: 17px;
 }
 
 .leaderboard-list--full .leaderboard-item__score {

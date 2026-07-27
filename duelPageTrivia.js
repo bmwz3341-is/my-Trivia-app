@@ -22,6 +22,7 @@ const duelState = {
 
 let duelTimerInterval = null;
 let duelTimeLeft = DUEL_QUESTION_TIME;
+let duelTimerParams = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   initDuelPage();
@@ -40,11 +41,21 @@ async function initDuelPage() {
   document.getElementById('duelBackButton').addEventListener('click', () => {
     window.location.href = 'index.html';
   });
-  document.getElementById('duelHomeButton').addEventListener('click', () => {
-    window.location.href = 'index.html';
+
+  renderPlayerBadge(document.getElementById('duelPlayerBadgeContainer'));
+
+  const duelScoreInfoOverlay = document.getElementById('duelScoreInfoOverlay');
+  document.getElementById('duelScoreInfoButton').addEventListener('click', () => {
+    duelScoreInfoOverlay.hidden = false;
+    stopDuelTimer();
   });
-  document.getElementById('duelLeaderboardButton').addEventListener('click', () => {
-    window.location.href = 'leaderboardPage.html?tab=duel';
+  const closeDuelScoreInfo = () => {
+    duelScoreInfoOverlay.hidden = true;
+    if (duelTimerParams && !duelState.answeredThisQuestion) resumeDuelTimer();
+  };
+  document.getElementById('duelScoreInfoCloseButton').addEventListener('click', closeDuelScoreInfo);
+  duelScoreInfoOverlay.addEventListener('click', (event) => {
+    if (event.target === duelScoreInfoOverlay) closeDuelScoreInfo();
   });
 
   duelState.uid = await ensurePlayerAuth();
@@ -192,19 +203,27 @@ function renderDuelQuestion(data) {
 function startDuelTimer(index, totalQuestions, correctIndex, questionText) {
   stopDuelTimer();
   duelTimeLeft = DUEL_QUESTION_TIME;
+  duelTimerParams = { index, totalQuestions, correctIndex, questionText };
   updateDuelTimerDisplay();
+  resumeDuelTimer();
+}
 
+function resumeDuelTimer() {
+  stopDuelTimer();
+  startTickingClock(() => duelTimeLeft, DUEL_WARNING_TIME);
   duelTimerInterval = setInterval(() => {
     duelTimeLeft -= 1;
     updateDuelTimerDisplay();
     if (duelTimeLeft <= 0) {
       stopDuelTimer();
+      const { index, totalQuestions, correctIndex, questionText } = duelTimerParams;
       handleDuelAnswerClick(-1, correctIndex, index, totalQuestions, questionText);
     }
   }, 1000);
 }
 
 function stopDuelTimer() {
+  stopTickingClock();
   if (duelTimerInterval) {
     clearInterval(duelTimerInterval);
     duelTimerInterval = null;
@@ -235,6 +254,15 @@ async function handleDuelAnswerClick(selectedIndex, correctIndex, questionIndex,
 
   const isCorrect = selectedIndex === correctIndex;
   const timedOut = selectedIndex === -1;
+
+  if (!timedOut) {
+    if (isCorrect) {
+      playCorrectSound();
+    } else {
+      playWrongSound();
+    }
+  }
+
   const elapsed = DUEL_QUESTION_TIME - duelTimeLeft;
   let points = 0;
   if (isCorrect) {
@@ -272,18 +300,13 @@ async function showDuelResult(data) {
   document.getElementById('duelQuestionCard').hidden = true;
   document.getElementById('duelAnswersGrid').hidden = true;
   document.getElementById('duelWaitingForOpponent').hidden = true;
-  const resultScreen = document.getElementById('duelResultScreen');
-  resultScreen.hidden = false;
-  requestAnimationFrame(() => resultScreen.classList.add('result-screen--visible'));
-  triggerLeaderboardButtonBlink('duelLeaderboardButton');
 
   const me = getMyPlayer(data);
   const opponentId = data.hostId === duelState.uid ? data.guestId : data.hostId;
   const opponent = opponentId ? data.players[opponentId] : null;
 
   if (!me) {
-    document.getElementById('duelResultTitle').textContent = 'הקרב הסתיים';
-    document.getElementById('duelResultScore').textContent = '';
+    window.location.href = 'index.html';
     return;
   }
 
@@ -291,18 +314,17 @@ async function showDuelResult(data) {
   if (opponent && me.score > opponent.score) title = 'ניצחתם! 🏆';
   else if (opponent && me.score < opponent.score) title = 'הפסדתם';
 
-  document.getElementById('duelResultTitle').textContent = title;
-  document.getElementById('duelResultScore').textContent = opponent
-    ? `${me.score} - ${opponent.score}`
-    : `צברתם ${me.score} נקודות`;
-
   const correctCount = duelState.history.filter((entry) => entry.isCorrect).length;
   const answeredCount = duelState.history.filter((entry) => !entry.timedOut).length;
-  document.getElementById('duelResultAccuracy').textContent =
-    `הצלחתם לענות נכון על ${correctCount} מתוך ${answeredCount} שאלות שנענו`;
 
-  renderDuelResultHistory();
-  renderPlayerBadge(document.getElementById('duelResultPlayerBadgeContainer'), { profile: { name: me.name, avatar: me.avatar } });
+  const result = {
+    title,
+    scoreText: opponent ? `${me.score} - ${opponent.score}` : `צברתם ${me.score} נקודות`,
+    accuracyText: `הצלחתם לענות נכון על ${correctCount} מתוך ${answeredCount} שאלות שנענו`,
+    history: duelState.history,
+    profile: { name: me.name, avatar: me.avatar },
+    rankInfo: '',
+  };
 
   try {
     const { rank, total } = await addLeaderboardEntry({
@@ -311,28 +333,19 @@ async function showDuelResult(data) {
       avatar: me.avatar,
       score: me.score,
     }, DUEL_LEADERBOARD_COLLECTION);
-    document.getElementById('duelLeaderboardRankInfo').textContent = `המיקום שלכם בלוח התוצאות: #${rank} מתוך ${total}`;
+    result.rankInfo = `המיקום שלכם בלוח התוצאות: #${rank} מתוך ${total}`;
   } catch (err) {
     console.error('Failed to record duel result on leaderboard:', err);
-    document.getElementById('duelLeaderboardRankInfo').textContent = 'לא ניתן היה לטעון את לוח התוצאות כרגע';
+    result.rankInfo = 'לא ניתן היה לטעון את לוח התוצאות כרגע';
   }
-}
 
-function renderDuelResultHistory() {
-  const list = document.getElementById('duelResultHistoryList');
-  list.innerHTML = '';
+  try {
+    sessionStorage.setItem('triviaDuelLastResult', JSON.stringify(result));
+  } catch (err) {
+    // ignore storage failures (e.g. private browsing quota)
+  }
 
-  duelState.history.forEach((entry, index) => {
-    const item = document.createElement('li');
-    item.className = `result-history-item ${entry.isCorrect ? 'result-history-item--correct' : 'result-history-item--wrong'}`;
-    const timeLabel = entry.timedOut ? '⏰ לא הספקתם' : `⏱️ ${entry.elapsed.toFixed(1)} שנ׳`;
-    item.innerHTML = `
-      <span class="result-history-item__icon">${entry.isCorrect ? '✔' : '✘'}</span>
-      <span class="result-history-item__text">${index + 1}. ${truncateText(entry.text)}</span>
-      <span class="result-history-item__time">${timeLabel}</span>
-    `;
-    list.appendChild(item);
-  });
+  window.location.href = 'duelResultPage.html';
 }
 
 window.addEventListener('beforeunload', () => {

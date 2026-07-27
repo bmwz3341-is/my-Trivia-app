@@ -126,6 +126,13 @@ function renderDuelSubCategoryStep(categoryKey, categoryData) {
   const body = document.getElementById('duelSetupBody');
   body.innerHTML = '';
 
+  const backButton = document.createElement('button');
+  backButton.type = 'button';
+  backButton.className = 'duel-setup__back-button';
+  backButton.innerHTML = '<span class="duel-setup__back-arrow">→</span><span>קטגוריה אחרת</span>';
+  backButton.addEventListener('click', () => renderDuelCategoryStep());
+  body.appendChild(backButton);
+
   const subEntries = Object.entries(categoryData.subcategories);
   const box = buildH2HCardBox(
     subEntries,

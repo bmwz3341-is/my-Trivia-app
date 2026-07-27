@@ -188,6 +188,7 @@ function startTimer(reset = true) {
     pausedDurationMs = 0;
   }
   updateTimerDisplay();
+  startTickingClock(() => timeLeft, WARNING_TIME);
 
   timerInterval = setInterval(() => {
     timeLeft -= 1;
@@ -201,6 +202,7 @@ function startTimer(reset = true) {
 }
 
 function stopTimer() {
+  stopTickingClock();
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
@@ -292,6 +294,11 @@ function handleAnswerClick(selectedIndex, button, clickRenderId) {
 
   if (!timedOut) {
     state.answeredCount += 1;
+    if (isCorrect) {
+      playCorrectSound();
+    } else {
+      playWrongSound();
+    }
   }
 
   state.history.push({

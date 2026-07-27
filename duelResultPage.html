@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>טריוויה - תוצאות הקרב</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="questPageTrivia.css">
+  <link rel="stylesheet" href="profileLeaderboard.css">
+  <style>
+    #duelResultPlayerBadgeContainer.result-player-badge {
+      margin-top: 70px;
+    }
+
+    #duelLeaderboardNavButton.leaderboard-nav-button--compact {
+      font-size: 22px;
+      padding: 12px 22px;
+    }
+
+    #duelLeaderboardNavButton.leaderboard-nav-button--blink {
+      animation: leaderboard-nav-blink 0.5s ease-in-out 100;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="quest-screen">
+    <section id="duelResultScreen" class="result-screen">
+      <div class="result-title-row">
+        <h2 id="duelResultTitle" class="result-title"></h2>
+        <button id="duelLeaderboardNavButton" class="leaderboard-nav-button leaderboard-nav-button--compact" type="button">
+          <span>🏆</span>
+          <span>לוח תוצאות</span>
+        </button>
+      </div>
+      <div id="duelResultPlayerBadgeContainer" class="result-player-badge"></div>
+      <p id="duelResultScore" class="result-score"></p>
+      <p id="duelResultAccuracy" class="result-accuracy"></p>
+      <ul id="duelResultHistoryList" class="result-history-list"></ul>
+
+      <section class="leaderboard-section">
+        <p id="duelLeaderboardRankInfo" class="leaderboard-section__rank-info"></p>
+      </section>
+
+      <button id="duelHomeButton" class="result-button" type="button">חזרה למסך הבית</button>
+    </section>
+  </main>
+
+  <script src="playerProfile.js"></script>
+  <script src="leaderboard.js"></script>
+  <script src="duelResultPage.js"></script>
+</body>
+</html>

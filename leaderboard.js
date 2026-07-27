@@ -40,10 +40,14 @@ async function addLeaderboardEntry({ playerId, name, avatar, score, category }, 
 function buildLeaderboardItem(entry, rank, isCurrent) {
   const item = document.createElement('li');
   item.className = `leaderboard-item${isCurrent ? ' leaderboard-item--current' : ''}`;
+  const avatarName = getAvatarById(entry.avatar).name;
   item.innerHTML = `
     <span class="leaderboard-item__rank">#${rank}</span>
     <span class="leaderboard-item__avatar">${getAvatarMarkup(entry.avatar)}</span>
-    <span class="leaderboard-item__name">${escapeHtml(entry.name)}</span>
+    <span class="leaderboard-item__name">
+      <span class="leaderboard-item__name-text">${escapeHtml(entry.name)}</span>
+      <span class="leaderboard-item__avatar-name">${escapeHtml(avatarName)}</span>
+    </span>
     <span class="leaderboard-item__category">${escapeHtml(entry.category || '')}</span>
     <span class="leaderboard-item__score">${entry.score} נק'</span>
   `;

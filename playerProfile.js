@@ -38,6 +38,76 @@ const AVATAR_OPTIONS = [
   { id: 'happyChef', name: 'טבח שמח', style: 'big-smile', seed: 'happy-chef-7' },
   { id: 'cheerfulExplorer', name: 'חוקרת שמחה', style: 'big-smile', seed: 'cheerful-explorer-5' },
   { id: 'grinningPrankster', name: 'קונדס מחייך', style: 'fun-emoji', seed: 'grinning-prankster-8' },
+  { id: 'thunderFist', name: 'אגרוף הרעם', style: 'avataaars', seed: 'thunder-fist-1' },
+  { id: 'emeraldFlash', name: 'הברק האזמרגד', style: 'avataaars', seed: 'emerald-flash-6' },
+  { id: 'shadowNinja', name: 'נינג\'ה הצללים', style: 'adventurer', seed: 'shadow-ninja-14' },
+  { id: 'galacticRanger', name: 'השומר הגלקטי', style: 'bottts', seed: 'galactic-ranger-4' },
+  { id: 'mightyFalcon', name: 'הבז האדיר', style: 'avataaars', seed: 'mighty-falcon-9' },
+  { id: 'crystalSorceress', name: 'מכשפת הבדולח', style: 'big-smile', seed: 'crystal-sorceress-3' },
+  { id: 'flameGuardian', name: 'שומר הלהבה', style: 'avataaars', seed: 'flame-guardian-8' },
+  { id: 'cyberKnight', name: 'האביר הסייברי', style: 'bottts', seed: 'cyber-knight-2' },
+  { id: 'moonHuntress', name: 'צידת הירח', style: 'micah', seed: 'moon-huntress-5' },
+  { id: 'goldenPhoenix', name: 'עוף החול הזהוב', style: 'avataaars', seed: 'golden-phoenix-7' },
+  { id: 'frostTitan', name: 'טיטאן הכפור', style: 'avataaars', seed: 'frost-titan-1' },
+  { id: 'cosmicVoyager', name: 'הנווד הקוסמי', style: 'notionists', seed: 'cosmic-voyager-6' },
+  { id: 'laughingJester', name: 'הליצן הצוחק', style: 'fun-emoji', seed: 'laughing-jester-3' },
+  { id: 'dreamyPainter', name: 'הצייר החולמני', style: 'croodles', seed: 'dreamy-painter-9' },
+  { id: 'brightInventor', name: 'הממציא הבהיר', style: 'big-smile', seed: 'bright-inventor-4' },
+  { id: 'gentleGiant', name: 'הענק הרך', style: 'open-peeps', seed: 'gentle-giant-2' },
+  { id: 'swiftArrow', name: 'החץ המהיר', style: 'avataaars', seed: 'swift-arrow-7' },
+  { id: 'mysticOwl', name: 'הינשוף המיסטי', style: 'lorelei', seed: 'mystic-owl-5' },
+  { id: 'candyWitch', name: 'מכשפת הממתקים', style: 'big-smile', seed: 'candy-witch-8' },
+  { id: 'steelPhantom', name: 'הרוח הפלדה', style: 'bottts', seed: 'steel-phantom-3' },
+  { id: 'valiantScout', name: 'הצופה האמיץ', style: 'personas', seed: 'valiant-scout-1' },
+  { id: 'silverHawk', name: 'הנץ הכסוף', style: 'personas', seed: 'silver-hawk-2' },
+  { id: 'nobleRanger', name: 'השומר האציל', style: 'personas', seed: 'noble-ranger-3' },
+  { id: 'duskWanderer', name: 'נווד הדמדומים', style: 'personas', seed: 'dusk-wanderer-4' },
+  { id: 'amberScholar', name: 'המלומד הענברי', style: 'personas', seed: 'amber-scholar-5' },
+  { id: 'quietArtisan', name: 'האומן השקט', style: 'micah', seed: 'quiet-artisan-1' },
+  { id: 'brightVoyager', name: 'המפליג הבהיר', style: 'micah', seed: 'bright-voyager-2' },
+  { id: 'calmSentinel', name: 'הזקיף הרגוע', style: 'micah', seed: 'calm-sentinel-3' },
+  { id: 'gracefulDancer', name: 'הרקדנית החיננית', style: 'micah', seed: 'graceful-dancer-4' },
+  { id: 'honestMerchant', name: 'הסוחר הישר', style: 'micah', seed: 'honest-merchant-5' },
+  { id: 'velvetSinger', name: 'הזמרת הקטיפה', style: 'notionists', seed: 'velvet-singer-1' },
+  { id: 'keenArcher', name: 'הקשת החדה', style: 'notionists', seed: 'keen-archer-2' },
+  { id: 'cleverEngineer', name: 'המהנדסת החכמה', style: 'notionists', seed: 'clever-engineer-3' },
+  { id: 'warmHealer', name: 'המרפא החם', style: 'notionists', seed: 'warm-healer-4' },
+  { id: 'boldCaptain', name: 'הקפטן הנועז', style: 'notionists', seed: 'bold-captain-5' },
+  { id: 'sunnyFarmer', name: 'החקלאי השמשי', style: 'open-peeps', seed: 'sunny-farmer-1' },
+  { id: 'kindTeacher', name: 'המורה האדיבה', style: 'open-peeps', seed: 'kind-teacher-2' },
+  { id: 'humbleMonk', name: 'הנזיר הצנוע', style: 'open-peeps', seed: 'humble-monk-3' },
+  { id: 'proudAthlete', name: 'הספורטאי הגאה', style: 'open-peeps', seed: 'proud-athlete-4' },
+  { id: 'curiousStudent', name: 'הסטודנטית הסקרנית', style: 'open-peeps', seed: 'curious-student-5' },
+  { id: 'elegantDuchess', name: 'הדוכסית האלגנטית', style: 'lorelei', seed: 'elegant-duchess-1' },
+  { id: 'fiercePirateQueen', name: 'מלכת הפיראטים העזה', style: 'lorelei', seed: 'fierce-pirate-queen-2' },
+  { id: 'wittyDetective', name: 'הבלשית השנונה', style: 'lorelei', seed: 'witty-detective-3' },
+  { id: 'dignifiedElder', name: 'הזקנה המכובדת', style: 'lorelei', seed: 'dignified-elder-4' },
+  { id: 'cheerfulBaker', name: 'האופה השמחה', style: 'lorelei', seed: 'cheerful-baker-5' },
+  { id: 'dogPuppyFace', name: 'גור כלבים', emoji: '🐶' },
+  { id: 'dogClassic', name: 'כלב', emoji: '🐕' },
+  { id: 'dogPoodleEmoji', name: 'פודל', emoji: '🐩' },
+  { id: 'dogGuide', name: 'כלב נחייה', emoji: '🦮' },
+  { id: 'dogService', name: 'כלב שירות', emoji: '🐕‍🦺' },
+  { id: 'everydayDad', name: 'אבא', style: 'personas', seed: 'everyday-dad-1' },
+  { id: 'everydayMom', name: 'אמא', style: 'personas', seed: 'everyday-mom-2' },
+  { id: 'youngMan', name: 'גבר צעיר', style: 'micah', seed: 'young-man-3' },
+  { id: 'youngWoman', name: 'אישה צעירה', style: 'micah', seed: 'young-woman-4' },
+  { id: 'littleBoy', name: 'ילד', style: 'open-peeps', seed: 'little-boy-5' },
+  { id: 'littleGirl', name: 'ילדה', style: 'open-peeps', seed: 'little-girl-6' },
+  { id: 'grandpaFigure', name: 'סבא', style: 'notionists', seed: 'grandpa-figure-7' },
+  { id: 'grandmaFigure', name: 'סבתא', style: 'notionists', seed: 'grandma-figure-8' },
+  { id: 'teenBoy', name: 'נער', style: 'lorelei', seed: 'teen-boy-9' },
+  { id: 'teenGirl', name: 'נערה', style: 'lorelei', seed: 'teen-girl-10' },
+  { id: 'carFordModelT', name: 'פורד מודל T', url: 'https://upload.wikimedia.org/wikipedia/commons/9/95/1924_Ford_Model_T_Flivver_IAA_2023_1X7A0610.jpg' },
+  { id: 'carVwBeetle', name: 'פולקסווגן חיפושית', url: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/VW_K%C3%A4fer_193909.jpg' },
+  { id: 'carCadillacEldorado', name: 'קאדילק אלדוראדו 1959', url: 'https://upload.wikimedia.org/wikipedia/commons/9/97/1959_Cadillac_Eldorado_Biarritz.jpg' },
+  { id: 'carFordMustang', name: 'פורד מוסטנג 1965', url: 'https://upload.wikimedia.org/wikipedia/commons/f/fc/1965_Ford_Mustang_Convertible_Classic-Gala_2021_1X7A0275.jpg' },
+  { id: 'carChevyBelAir', name: 'שברולט בל אייר 1957', url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Chevrolet_Bel_Air_1957_Ebern_2019_6200531.jpg' },
+  { id: 'carCitroen2CV', name: 'סיטרואן 2CV', url: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Citroen_2CV_Warwick_Classic_Car_Show_Warwick_ENGLAND_August_2017.jpg' },
+  { id: 'carFiat500', name: 'פיאט 500 קלאסית', url: 'https://upload.wikimedia.org/wikipedia/commons/6/65/Fiat_500_1964.jpg' },
+  { id: 'carVolvoPV544', name: 'וולוו PV544', url: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Volvo_pv544.jpg' },
+  { id: 'carJaguarEType', name: 'יגואר E-Type', url: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Jaguar_E-Type_Roadster_%281969%29_Classic-Gala_2021_1X7A0126.jpg' },
+  { id: 'carPorsche356', name: 'פורשה 356', url: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Porsche_356_A_%282014-09-13_7068_Sp%29.jpg' },
 ];
 
 function getAvatarById(avatarId) {
@@ -46,11 +116,15 @@ function getAvatarById(avatarId) {
 
 function getAvatarUrl(avatarId) {
   const avatar = getAvatarById(avatarId);
+  if (avatar.url) return avatar.url;
   return `${DICEBEAR_BASE_URL}/${avatar.style}/svg?seed=${encodeURIComponent(avatar.seed)}`;
 }
 
 function getAvatarMarkup(avatarId) {
   const avatar = getAvatarById(avatarId);
+  if (avatar.emoji) {
+    return `<span class="avatar-emoji" role="img" aria-label="${escapeHtml(avatar.name)}">${avatar.emoji}</span>`;
+  }
   return `<img src="${getAvatarUrl(avatarId)}" alt="${escapeHtml(avatar.name)}" loading="lazy">`;
 }
 
