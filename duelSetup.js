@@ -99,7 +99,7 @@ async function renderDuelCategoryStep() {
 
   if (!duelCategoryDataCache) {
     try {
-      const response = await fetch('questions.json');
+      const response = await fetch('questions.json', { cache: 'no-store' });
       duelCategoryDataCache = await response.json();
     } catch (err) {
       showDuelSetupError('לא הצלחנו לטעון את הקטגוריות. נסו שוב.');

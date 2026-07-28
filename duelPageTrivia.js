@@ -60,7 +60,7 @@ async function initDuelPage() {
 
   duelState.uid = await ensurePlayerAuth();
 
-  const response = await fetch('questions.json');
+  const response = await fetch('questions.json', { cache: 'no-store' });
   duelState.categoryData = await response.json();
 
   duelState.unsubscribe = watchDuelRoom(roomCode, handleDuelSnapshot);

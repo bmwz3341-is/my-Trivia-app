@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initSubCategoryPage() {
-  const response = await fetch('questions.json');
+  const response = await fetch('questions.json', { cache: 'no-store' });
   CATEGORY_DATA = await response.json();
 
   const params = new URLSearchParams(window.location.search);

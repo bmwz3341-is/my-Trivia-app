@@ -175,8 +175,8 @@ body {
 
 .global-timer {
   position: relative;
-  width: clamp(52px, 10dvh, 96px);
-  height: clamp(52px, 10dvh, 96px);
+  width: clamp(46px, 8.8dvh, 84px);
+  height: clamp(46px, 8.8dvh, 84px);
   margin: clamp(22px, 5dvh, 50px) auto 0;
 }
 

@@ -22,6 +22,7 @@ let state = {
   answered: false,
   answeredCount: 0,
   remainingQueue: [],
+  lastServedIndex: null,
   history: [],
 };
 
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initQuestPage() {
-  const response = await fetch('questions.json');
+  const response = await fetch('questions.json', { cache: 'no-store' });
   CATEGORY_DATA = await response.json();
 
   const params = new URLSearchParams(window.location.search);
@@ -111,17 +112,23 @@ function loadQuestionQueue() {
     const raw = localStorage.getItem(getQueueStorageKey());
     const saved = raw ? JSON.parse(raw) : null;
     if (saved && saved.total === state.questions.length && Array.isArray(saved.queue) && saved.queue.length > 0) {
+      state.lastServedIndex = typeof saved.lastServed === 'number' ? saved.lastServed : null;
       return saved.queue;
     }
   } catch (err) {
     // localStorage unavailable or corrupted; fall back to a fresh shuffle below
   }
+  state.lastServedIndex = null;
   return shuffledIndices(state.questions.length);
 }
 
 function saveQuestionQueue() {
   try {
-    localStorage.setItem(getQueueStorageKey(), JSON.stringify({ total: state.questions.length, queue: state.remainingQueue }));
+    localStorage.setItem(getQueueStorageKey(), JSON.stringify({
+      total: state.questions.length,
+      queue: state.remainingQueue,
+      lastServed: state.lastServedIndex,
+    }));
   } catch (err) {
     // ignore storage failures (e.g. private browsing quota)
   }
@@ -130,6 +137,7 @@ function saveQuestionQueue() {
 function pickNextQuestionIndex() {
   if (state.remainingQueue.length === 0) return null;
   const index = state.remainingQueue.shift();
+  state.lastServedIndex = index;
   saveQuestionQueue();
   return index;
 }
@@ -138,6 +146,10 @@ function pickNextOrResetIndex() {
   let index = pickNextQuestionIndex();
   if (index === null) {
     state.remainingQueue = shuffledIndices(state.questions.length);
+    // Avoid immediately repeating the last question served in the previous session/cycle.
+    if (state.remainingQueue.length > 1 && state.remainingQueue[0] === state.lastServedIndex) {
+      [state.remainingQueue[0], state.remainingQueue[1]] = [state.remainingQueue[1], state.remainingQueue[0]];
+    }
     index = pickNextQuestionIndex();
   }
   return index;
