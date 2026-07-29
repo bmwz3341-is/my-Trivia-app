@@ -1,0 +1,239 @@
+/* Settings screen (TriviaSettings.js) — dark purple/pink gradient modal matching the rest of the app */
+
+.settings-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 20px;
+  z-index: 300;
+}
+
+.settings-modal-overlay[hidden] {
+  display: none;
+}
+
+.settings-modal {
+  width: 100%;
+  max-width: 420px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: linear-gradient(160deg, #FF3D81, #6C2BD9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 22px;
+  color: #ffffff;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  direction: rtl;
+}
+
+.settings-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.settings-modal__title {
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.settings-close-button {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.settings-close-button:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.settings-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-section {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.settings-section__title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.settings-row + .settings-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-row__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.settings-field-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Toggle switch */
+
+.settings-toggle {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.settings-toggle input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.settings-toggle__track {
+  display: block;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+  transition: background 0.2s ease;
+}
+
+.settings-toggle__thumb {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 3px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translateX(0);
+  transition: transform 0.2s ease;
+}
+
+.settings-toggle input:checked + .settings-toggle__track {
+  background: #22D3EE;
+}
+
+.settings-toggle input:checked + .settings-toggle__track .settings-toggle__thumb {
+  transform: translateX(-20px);
+}
+
+.settings-toggle input:focus-visible + .settings-toggle__track {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+/* Timer duration segmented control */
+
+.settings-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.settings-segmented__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.settings-segmented__option:hover {
+  transform: translateY(-1px);
+}
+
+.settings-segmented__label {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.settings-segmented__hint {
+  font-size: 0.72rem;
+  opacity: 0.75;
+}
+
+.settings-segmented__option--selected {
+  background: #22D3EE;
+  border-color: #22D3EE;
+  color: #141110;
+}
+
+.settings-segmented__option--selected .settings-segmented__hint {
+  opacity: 0.75;
+}
+
+/* Destructive data-management buttons */
+
+.settings-danger-button {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid rgba(192, 39, 45, 0.6);
+  border-radius: 14px;
+  background: rgba(192, 39, 45, 0.18);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.settings-danger-button:hover:not(:disabled) {
+  background: rgba(192, 39, 45, 0.32);
+  transform: translateY(-1px);
+}
+
+.settings-danger-button:disabled {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.settings-danger-button + .settings-danger-button {
+  margin-top: 10px;
+}
+
+/* About / version */
+
+.settings-section--about {
+  background: transparent;
+  border: none;
+  padding: 0 4px;
+  text-align: center;
+}
+
+.settings-about-text {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  font-weight: 600;
+}

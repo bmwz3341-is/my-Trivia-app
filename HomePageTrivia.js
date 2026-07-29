@@ -15,6 +15,10 @@ function initHomePage() {
     window.location.href = 'leaderboardPage.html';
   });
 
+  document.getElementById('settingsButton').addEventListener('click', () => {
+    openSettingsModal();
+  });
+
   document.getElementById('vsPlayerButton').addEventListener('click', () => {
     if (hasPlayerProfile()) {
       openDuelSetupModal();

@@ -21,6 +21,9 @@ function initDuelResultPage() {
   renderPlayerBadge(document.getElementById('duelResultPlayerBadgeContainer'), { profile: result.profile });
 
   document.getElementById('duelResultTitle').textContent = result.title;
+  if (result.title && result.title.includes('ניצחתם')) {
+    playApplauseSound();
+  }
   document.getElementById('duelResultScore').textContent = result.scoreText;
   document.getElementById('duelResultAccuracy').textContent = result.accuracyText;
   document.getElementById('duelLeaderboardRankInfo').textContent = result.rankInfo;
