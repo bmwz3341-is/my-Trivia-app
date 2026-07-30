@@ -260,6 +260,7 @@ async function handleDuelAnswerClick(selectedIndex, correctIndex, questionIndex,
       playCorrectSound();
     } else {
       playWrongSound();
+      triggerWrongAnswerHaptic();
     }
   }
 

@@ -21,9 +21,6 @@ function initResultPage() {
   renderPlayerBadge(document.getElementById('resultPlayerBadgeContainer'), { profile: getPlayerProfile() });
 
   document.getElementById('resultTitle').textContent = result.title;
-  if (result.title && result.title.includes('עניתם על כל השאלות')) {
-    playApplauseSound();
-  }
   document.getElementById('resultScore').textContent = result.scoreText;
   document.getElementById('resultAccuracy').textContent = result.accuracyText;
   document.getElementById('leaderboardRankInfo').textContent = result.rankInfo;

@@ -1,7 +1,9 @@
 let CATEGORY_DATA = {};
 
-const QUESTION_TIME = 20;
-const WARNING_TIME = 10;
+// Regular-game question timer, driven by the "משך זמן לשאלה" setting (TriviaSettings.js).
+// Duel mode has its own separate constant (duelPageTrivia.js) and is unaffected by this setting.
+const QUESTION_TIME = getTriviaSettings().timerDuration;
+const WARNING_TIME = Math.ceil(QUESTION_TIME / 2);
 const GLOBAL_TIME = 90;
 const GLOBAL_WARNING_TIME = 15;
 const GLOBAL_RING_CIRCUMFERENCE = 2 * Math.PI * 42;
@@ -310,6 +312,7 @@ function handleAnswerClick(selectedIndex, button, clickRenderId) {
       playCorrectSound();
     } else {
       playWrongSound();
+      triggerWrongAnswerHaptic();
     }
   }
 

@@ -27,6 +27,11 @@ body {
   overflow-x: hidden;
 }
 
+/* AMOLED dark theme — true-black page background */
+html[data-theme="amoled"] .leaderboard-screen {
+  background: #000000;
+}
+
 /* Back button */
 
 .back-button {

@@ -337,6 +337,19 @@ body {
   text-align: center;
 }
 
+/* AMOLED dark theme — true-black page + dark card with light text for contrast */
+html[data-theme="amoled"] .quest-screen {
+  background: #000000;
+}
+
+html[data-theme="amoled"] .question-card {
+  background: #1a1a1a;
+}
+
+html[data-theme="amoled"] .question-text {
+  color: #F5F5F5;
+}
+
 .answers-grid {
   width: 100%;
   max-width: 420px;

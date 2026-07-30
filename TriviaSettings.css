@@ -29,6 +29,12 @@
   direction: rtl;
 }
 
+/* AMOLED dark theme — true-black modal so it matches the rest of the app */
+html[data-theme="amoled"] .settings-modal {
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
 .settings-modal__header {
   display: flex;
   align-items: center;

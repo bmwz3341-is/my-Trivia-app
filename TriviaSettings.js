@@ -8,16 +8,22 @@ const TRIVIA_QUEUE_STORAGE_PREFIX = 'triviaQueue::';
 const APP_VERSION = '1.0.0';
 
 const TIMER_DURATION_OPTIONS = [
+  { value: 20, label: 'רגוע', hint: '20 שניות' },
+  { value: 15, label: 'רגיל', hint: '15 שניות' },
   { value: 5, label: 'מהיר מאוד', hint: '5 שניות' },
-  { value: 10, label: 'רגיל', hint: '10 שניות' },
-  { value: 15, label: 'רגוע', hint: '15 שניות' },
+];
+
+const THEME_OPTIONS = [
+  { value: 'default', label: 'צבעוני', hint: 'ערכת הנושא הרגילה' },
+  { value: 'amoled', label: 'כהה מלא', hint: 'AMOLED Dark' },
 ];
 
 const DEFAULT_TRIVIA_SETTINGS = {
   soundEffects: true,
   backgroundMusic: true,
   hapticFeedback: true,
-  timerDuration: 10,
+  timerDuration: 20,
+  theme: 'default',
 };
 
 function getTriviaSettings() {
@@ -37,9 +43,34 @@ function saveTriviaSettings(partialSettings) {
   } catch (err) {
     // ignore storage failures (e.g. private browsing quota)
   }
+  applyTriviaTheme(next.theme);
   window.dispatchEvent(new CustomEvent('triviaSettingsChanged', { detail: next }));
   return next;
 }
+
+// Short vibration on a wrong answer, gated by the hapticFeedback setting.
+// navigator.vibrate is unsupported on iOS Safari and some browsers — guarded
+// so calling this is always a safe no-op there.
+function triggerWrongAnswerHaptic() {
+  if (!getTriviaSettings().hapticFeedback) return;
+  if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return;
+  navigator.vibrate(200);
+}
+
+// Sets a data-theme attribute on <html> so every page's CSS can react to it
+// (see the `html[data-theme="amoled"]` overrides in each page's stylesheet).
+function applyTriviaTheme(theme) {
+  if (theme === 'amoled') {
+    document.documentElement.setAttribute('data-theme', 'amoled');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+}
+
+// Runs as soon as this script loads on any page, so the saved theme is applied
+// on load — not just when the settings modal (which only exists on the home
+// page) is opened.
+applyTriviaTheme(getTriviaSettings().theme);
 
 function resetQuestionHistory() {
   const keysToRemove = [];
@@ -96,6 +127,19 @@ function ensureSettingsModal() {
         </section>
 
         <section class="settings-section">
+          <h3 class="settings-section__title">תצוגה</h3>
+          <p class="settings-field-label">ערכת נושא</p>
+          <div class="settings-segmented" id="themeSegmented">
+            ${THEME_OPTIONS.map((option) => `
+              <button type="button" class="settings-segmented__option" data-value="${option.value}">
+                <span class="settings-segmented__label">${option.label}</span>
+                <span class="settings-segmented__hint">${option.hint}</span>
+              </button>
+            `).join('')}
+          </div>
+        </section>
+
+        <section class="settings-section">
           <h3 class="settings-section__title">נתונים ומערכת</h3>
           <button type="button" class="settings-danger-button" id="resetQuestionHistoryButton">
             איפוס היסטוריית שאלות
@@ -124,6 +168,13 @@ function ensureSettingsModal() {
     if (!button) return;
     saveTriviaSettings({ timerDuration: Number(button.dataset.value) });
     updateTimerDurationSelection(Number(button.dataset.value));
+  });
+
+  overlay.querySelector('#themeSegmented').addEventListener('click', (event) => {
+    const button = event.target.closest('.settings-segmented__option');
+    if (!button) return;
+    saveTriviaSettings({ theme: button.dataset.value });
+    updateThemeSelection(button.dataset.value);
   });
 
   overlay.querySelector('#resetQuestionHistoryButton').addEventListener('click', (event) => {
@@ -162,6 +213,12 @@ function updateTimerDurationSelection(selectedValue) {
   });
 }
 
+function updateThemeSelection(selectedValue) {
+  document.querySelectorAll('#themeSegmented .settings-segmented__option').forEach((button) => {
+    button.classList.toggle('settings-segmented__option--selected', button.dataset.value === selectedValue);
+  });
+}
+
 function flashButtonConfirmation(button, confirmationText) {
   clearTimeout(settingsModalState.confirmTimeoutId);
   const originalText = button.textContent;
@@ -181,6 +238,7 @@ function openSettingsModal() {
     input.checked = !!settings[input.dataset.setting];
   });
   updateTimerDurationSelection(settings.timerDuration);
+  updateThemeSelection(settings.theme);
 
   document.getElementById('settingsModalOverlay').hidden = false;
 }

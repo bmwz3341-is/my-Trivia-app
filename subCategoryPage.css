@@ -11,6 +11,10 @@ html, body {
   background: #6C2BD9;
 }
 
+html[data-theme="amoled"], html[data-theme="amoled"] body {
+  background: #000000;
+}
+
 body {
   font-family: 'Heebo', 'Segoe UI', Arial, sans-serif;
 }
@@ -84,6 +88,20 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* AMOLED dark theme — true-black page + dark card with light text for contrast */
+html[data-theme="amoled"] .sub-screen {
+  background: #000000;
+}
+
+html[data-theme="amoled"] .card--main {
+  background: #1a1a1a;
+}
+
+html[data-theme="amoled"] .card__title,
+html[data-theme="amoled"] .sub-category-row__label {
+  color: #F5F5F5;
 }
 
 .card__corner {

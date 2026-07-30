@@ -49,6 +49,11 @@ button {
   direction: rtl;
 }
 
+/* AMOLED dark theme — true-black page background, set via TriviaSettings.js */
+html[data-theme="amoled"] .home-screen {
+  background: #000000;
+}
+
 .app-title {
   color: #ffffff;
   font-weight: 900;
