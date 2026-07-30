@@ -37,6 +37,10 @@ async function addLeaderboardEntry({ playerId, name, avatar, score, category }, 
   };
 }
 
+async function deleteLeaderboardEntry(playerId, collectionName = LEADERBOARD_COLLECTION) {
+  await leaderboardCollectionRef(collectionName).doc(playerId).delete();
+}
+
 function buildLeaderboardItem(entry, rank, isCurrent) {
   const item = document.createElement('li');
   item.className = `leaderboard-item${isCurrent ? ' leaderboard-item--current' : ''}`;

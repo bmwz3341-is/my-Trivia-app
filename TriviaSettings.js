@@ -81,10 +81,15 @@ function resetQuestionHistory() {
   keysToRemove.forEach((key) => localStorage.removeItem(key));
 }
 
-function resetHighScores() {
-  // No separate local high-score cache exists yet in this codebase (the leaderboard
-  // is Firestore-backed via leaderboardPage.js/playerProfile.js) — this clears the
-  // reserved local key and notifies listeners so any local cache can react too.
+// Deletes this player's real score data — the leaderboard is Firestore-backed
+// (see leaderboard.js), so a local-only reset would have been a no-op.
+async function resetHighScores() {
+  await ensurePlayerAuth();
+  const playerId = getOrCreatePlayerId();
+  await Promise.all([
+    deleteLeaderboardEntry(playerId, LEADERBOARD_COLLECTION),
+    deleteLeaderboardEntry(playerId, DUEL_LEADERBOARD_COLLECTION),
+  ]);
   localStorage.removeItem(TRIVIA_HIGH_SCORES_STORAGE_KEY);
   window.dispatchEvent(new CustomEvent('triviaHighScoresReset'));
 }
@@ -183,10 +188,17 @@ function ensureSettingsModal() {
     flashButtonConfirmation(event.currentTarget, '✓ ההיסטוריה אופסה');
   });
 
-  overlay.querySelector('#resetHighScoresButton').addEventListener('click', (event) => {
-    if (!window.confirm('לאפס את השיאים והתוצאות המקומיים?')) return;
-    resetHighScores();
-    flashButtonConfirmation(event.currentTarget, '✓ השיאים אופסו');
+  overlay.querySelector('#resetHighScoresButton').addEventListener('click', async (event) => {
+    if (!window.confirm('לאפס את השיאים והתוצאות שלכם? הפעולה אינה הפיכה.')) return;
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+      await resetHighScores();
+      flashButtonConfirmation(button, '✓ השיאים אופסו');
+    } catch (err) {
+      button.disabled = false;
+      window.alert('לא הצלחנו לאפס את השיאים כרגע. בדקו את החיבור לאינטרנט ונסו שוב.');
+    }
   });
 
   overlay.querySelector('#settingsCloseButton').addEventListener('click', closeSettingsModal);
