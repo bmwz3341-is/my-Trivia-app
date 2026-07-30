@@ -54,7 +54,7 @@ function saveTriviaSettings(partialSettings) {
 function triggerWrongAnswerHaptic() {
   if (!getTriviaSettings().hapticFeedback) return;
   if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return;
-  navigator.vibrate(200);
+  navigator.vibrate([250, 100, 250]);
 }
 
 // Sets a data-theme attribute on <html> so every page's CSS can react to it
