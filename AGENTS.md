@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Project
 
@@ -54,10 +54,6 @@ Two independent timers run per solo round: a per-question timer (`QUESTION_TIME`
 ### Leaderboard
 
 Two Firestore collections: `leaderboard` (solo) and `duelLeaderboard`, both written via `addLeaderboardEntry()` in `leaderboard.js`. One doc per player (`playerId` as doc ID), updated transactionally to keep only the player's best score. Rank is computed by counting docs with a strictly higher score.
-
-### Typeface
-
-The UI font is **Rubik** (Google Fonts), loaded per-page via `<link>` tags in each HTML file's `<head>` (no self-hosting, no `@font-face`) and referenced as `font-family: 'Rubik', 'Segoe UI', Arial, sans-serif` in each page's CSS. Since there's no shared head/layout file, changing the font means updating the Google Fonts `<link>` in every page HTML plus the `font-family` rule in every page CSS individually.
 
 ### Design handoff folders
 
