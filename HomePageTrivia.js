@@ -26,6 +26,29 @@ function initHomePage() {
     }
     openProfileModal({ onConfirm: () => openDuelSetupModal() });
   });
+
+  document.getElementById('quickGameButton').addEventListener('click', () => {
+    if (hasPlayerProfile()) {
+      startQuickGame();
+      return;
+    }
+    openProfileModal({ onConfirm: () => startQuickGame() });
+  });
+}
+
+async function startQuickGame() {
+  const response = await fetch('questions.json', { cache: 'no-store' });
+  const categoryData = await response.json();
+
+  const categories = Object.keys(categoryData);
+  const category = categories[Math.floor(Math.random() * categories.length)];
+
+  const subKeys = Object.keys(categoryData[category].subcategories);
+  const sub = subKeys[Math.floor(Math.random() * subKeys.length)];
+
+  const count = categoryData[category].subcategories[sub].questions.length;
+
+  window.location.href = `questPageTrivia.html?category=${category}&sub=${sub}&count=${count}`;
 }
 
 function handleCategoryClick(card) {
