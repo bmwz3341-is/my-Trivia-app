@@ -59,7 +59,7 @@
     <div id="scoreInfoOverlay" class="modal-overlay" hidden>
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="scoreInfoTitle">
         <h3 id="scoreInfoTitle" class="modal__title">איך עובד הניקוד?</h3>
-        <ul class="score-info-list">
+        <ul id="scoreInfoTieredList" class="score-info-list">
           <li class="score-info-list__item">
             <span class="score-info-list__label">⚡ 0–4 שניות (מהיר במיוחד)</span>
             <span class="score-info-list__points">15 נק'</span>
@@ -75,6 +75,17 @@
           <li class="score-info-list__item">
             <span class="score-info-list__label">⏳ 15–20 שניות (איטי)</span>
             <span class="score-info-list__points">7 נק'</span>
+          </li>
+          <li class="score-info-list__item score-info-list__item--zero">
+            <span class="score-info-list__label">❌ תשובה שגויה / נגמר הזמן</span>
+            <span class="score-info-list__points">0 נק'</span>
+          </li>
+        </ul>
+        <p id="scoreInfoQuickSummary" class="score-info-summary" hidden></p>
+        <ul id="scoreInfoQuickList" class="score-info-list" hidden>
+          <li class="score-info-list__item">
+            <span class="score-info-list__label">✅ תשובה נכונה</span>
+            <span id="scoreInfoQuickPoints" class="score-info-list__points"></span>
           </li>
           <li class="score-info-list__item score-info-list__item--zero">
             <span class="score-info-list__label">❌ תשובה שגויה / נגמר הזמן</span>

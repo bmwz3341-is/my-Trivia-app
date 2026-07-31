@@ -2,11 +2,17 @@ let CATEGORY_DATA = {};
 
 // Regular-game question timer, driven by the "משך זמן לשאלה" setting (TriviaSettings.js).
 // Duel mode has its own separate constant (duelPageTrivia.js) and is unaffected by this setting.
-const QUESTION_TIME = getTriviaSettings().timerDuration;
-const WARNING_TIME = Math.ceil(QUESTION_TIME / 2);
-const GLOBAL_TIME = 90;
+// Quick Game mode overrides both to a fixed duration (see QUICK_GAME_QUESTION_TIME below).
+let QUESTION_TIME = getTriviaSettings().timerDuration;
+let WARNING_TIME = Math.ceil(QUESTION_TIME / 2);
+let GLOBAL_TIME = 90;
 const GLOBAL_WARNING_TIME = 15;
 const GLOBAL_RING_CIRCUMFERENCE = 2 * Math.PI * 42;
+
+const QUICK_GAME_QUESTION_COUNT = 10;
+const QUICK_GAME_QUESTION_TIME = 8;
+const QUICK_GAME_GLOBAL_TIME = 80;
+const QUICK_GAME_CORRECT_POINTS = 10;
 
 const SCORE_TIERS = [
   { maxElapsed: 4, points: 15 },
@@ -16,6 +22,7 @@ const SCORE_TIERS = [
 ];
 
 let state = {
+  mode: 'category',
   category: 'general-trivia',
   subCategory: '',
   questions: [],
@@ -29,7 +36,6 @@ let state = {
 };
 
 let timerInterval = null;
-let timeLeft = QUESTION_TIME;
 
 let globalTimerInterval = null;
 let globalTimeLeft = GLOBAL_TIME;
@@ -50,27 +56,56 @@ async function initQuestPage() {
   CATEGORY_DATA = await response.json();
 
   const params = new URLSearchParams(window.location.search);
-  const category = params.get('category');
-  const subCategory = params.get('sub');
-  const categoryData = CATEGORY_DATA[category];
-  const subCategoryData = categoryData ? categoryData.subcategories[subCategory] : null;
+  const isQuickGame = params.get('mode') === 'quick';
 
-  if (!categoryData || !subCategoryData) {
-    window.location.href = 'index.html';
-    return;
+  let headerTitle;
+  if (isQuickGame) {
+    QUESTION_TIME = QUICK_GAME_QUESTION_TIME;
+    WARNING_TIME = Math.ceil(QUESTION_TIME / 2);
+    GLOBAL_TIME = QUICK_GAME_GLOBAL_TIME;
+
+    state.mode = 'quick';
+    state.category = 'quick-game';
+    state.subCategory = '';
+    state.questions = drawQuickGameQuestions(CATEGORY_DATA, QUICK_GAME_QUESTION_COUNT);
+    state.remainingQueue = Array.from({ length: state.questions.length }, (_, i) => i);
+    headerTitle = 'אתגר מהיר';
+  } else {
+    const category = params.get('category');
+    const subCategory = params.get('sub');
+    const categoryData = CATEGORY_DATA[category];
+    const subCategoryData = categoryData ? categoryData.subcategories[subCategory] : null;
+
+    if (!categoryData || !subCategoryData) {
+      window.location.href = 'index.html';
+      return;
+    }
+
+    state.mode = 'category';
+    state.category = category;
+    state.subCategory = subCategory;
+    state.questions = subCategoryData.questions;
+    state.remainingQueue = loadQuestionQueue();
+    headerTitle = subCategoryData.title;
   }
 
-  state.category = category;
-  state.subCategory = subCategory;
-  state.questions = subCategoryData.questions;
-  state.remainingQueue = loadQuestionQueue();
   state.history = [];
-  state.currentIndex = pickNextOrResetIndex();
+  state.currentIndex = state.mode === 'quick' ? pickNextQuestionIndex() : pickNextOrResetIndex();
 
-  document.getElementById('categoryTitle').textContent = subCategoryData.title;
+  document.getElementById('categoryTitle').textContent = headerTitle;
   renderPlayerBadge(document.getElementById('questPlayerBadgeContainer'));
+
+  if (state.mode === 'quick') {
+    document.getElementById('scoreInfoTieredList').hidden = true;
+    document.getElementById('scoreInfoQuickSummary').hidden = false;
+    document.getElementById('scoreInfoQuickSummary').textContent =
+      `${QUICK_GAME_QUESTION_COUNT} שאלות • ${QUICK_GAME_QUESTION_TIME} שניות לכל שאלה • ${QUICK_GAME_GLOBAL_TIME} שניות בסך הכל לסבב`;
+    document.getElementById('scoreInfoQuickList').hidden = false;
+    document.getElementById('scoreInfoQuickPoints').textContent = `${QUICK_GAME_CORRECT_POINTS} נק'`;
+  }
+
   document.getElementById('backButton').addEventListener('click', () => {
-    window.location.href = `subCategoryPage.html?category=${state.category}`;
+    window.location.href = state.mode === 'quick' ? 'index.html' : `subCategoryPage.html?category=${state.category}`;
   });
   const scoreInfoOverlay = document.getElementById('scoreInfoOverlay');
   document.getElementById('scoreInfoButton').addEventListener('click', () => {
@@ -125,6 +160,9 @@ function loadQuestionQueue() {
 }
 
 function saveQuestionQueue() {
+  // Quick Game draws its 12 questions once at round start (drawQuickGameQuestions) and
+  // just plays through them in order — nothing to persist per-question here.
+  if (state.mode === 'quick') return;
   try {
     localStorage.setItem(getQueueStorageKey(), JSON.stringify({
       total: state.questions.length,
@@ -142,6 +180,72 @@ function pickNextQuestionIndex() {
   state.lastServedIndex = index;
   saveQuestionQueue();
   return index;
+}
+
+// Quick Game: draws QUICK_GAME_QUESTION_COUNT questions from a single shuffled pool spanning
+// every category/sub-category, persisted in localStorage so repeats are avoided across plays
+// (mirroring the per-category queue above) until the whole question bank has been served.
+const QUICK_GAME_QUEUE_KEY = 'triviaQueue::quickGame';
+
+function buildFlatQuestionRefs(categoryData) {
+  const refs = [];
+  Object.keys(categoryData).forEach((categoryKey) => {
+    const subcategories = categoryData[categoryKey].subcategories;
+    Object.keys(subcategories).forEach((subKey) => {
+      subcategories[subKey].questions.forEach((_, questionIndex) => {
+        refs.push({ category: categoryKey, subCategory: subKey, index: questionIndex });
+      });
+    });
+  });
+  return refs;
+}
+
+function loadQuickGameQueue(total) {
+  try {
+    const raw = localStorage.getItem(QUICK_GAME_QUEUE_KEY);
+    const saved = raw ? JSON.parse(raw) : null;
+    if (saved && saved.total === total && Array.isArray(saved.queue)) {
+      return { queue: saved.queue, lastServed: typeof saved.lastServed === 'number' ? saved.lastServed : null };
+    }
+  } catch (err) {
+    // localStorage unavailable or corrupted; fall back to a fresh shuffle below
+  }
+  return { queue: shuffledIndices(total), lastServed: null };
+}
+
+function saveQuickGameQueue(total, queue, lastServed) {
+  try {
+    localStorage.setItem(QUICK_GAME_QUEUE_KEY, JSON.stringify({ total, queue, lastServed }));
+  } catch (err) {
+    // ignore storage failures (e.g. private browsing quota)
+  }
+}
+
+function drawQuickGameQuestions(categoryData, count) {
+  const refs = buildFlatQuestionRefs(categoryData);
+  const drawCount = Math.min(count, refs.length);
+  let { queue, lastServed } = loadQuickGameQueue(refs.length);
+
+  const drawnRefs = [];
+  while (drawnRefs.length < drawCount) {
+    if (queue.length === 0) {
+      queue = shuffledIndices(refs.length);
+      // Avoid immediately repeating the last question served in the previous quick game.
+      if (queue.length > 1 && queue[0] === lastServed) {
+        [queue[0], queue[1]] = [queue[1], queue[0]];
+      }
+    }
+    lastServed = queue.shift();
+    drawnRefs.push(refs[lastServed]);
+  }
+
+  saveQuickGameQueue(refs.length, queue, lastServed);
+
+  return drawnRefs.map((ref) => ({
+    ...categoryData[ref.category].subcategories[ref.subCategory].questions[ref.index],
+    sourceCategory: ref.category,
+    sourceSubCategory: ref.subCategory,
+  }));
 }
 
 function pickNextOrResetIndex() {
@@ -194,25 +298,30 @@ function getElapsedSeconds() {
   return Math.max(0, Math.round(rawMs / 100) / 10);
 }
 
+function getRemainingTime() {
+  return Math.max(0, QUESTION_TIME - getElapsedSeconds());
+}
+
 function startTimer(reset = true) {
   stopTimer();
   if (reset) {
-    timeLeft = QUESTION_TIME;
     questionStartedAt = Date.now();
     pausedDurationMs = 0;
   }
   updateTimerDisplay();
-  startTickingClock(() => timeLeft, WARNING_TIME);
+  startTickingClock(getRemainingTime, WARNING_TIME);
 
+  // Ticks every 100ms (instead of 1s) so fractional durations like Quick Game's 7.5s
+  // still time out at the right moment, while the on-screen badge shows a whole second.
   timerInterval = setInterval(() => {
-    timeLeft -= 1;
+    const remaining = getRemainingTime();
     updateTimerDisplay();
 
-    if (timeLeft <= 0) {
+    if (remaining <= 0) {
       stopTimer();
       handleTimeOut();
     }
-  }, 1000);
+  }, 100);
 }
 
 function stopTimer() {
@@ -224,8 +333,10 @@ function stopTimer() {
 }
 
 function updateTimerDisplay() {
-  document.getElementById('timerBadge').textContent = timeLeft;
-  document.getElementById('timerCard').classList.toggle('timer-card--warning', timeLeft <= WARNING_TIME && timeLeft > 0);
+  const remaining = getRemainingTime();
+  const displaySeconds = Math.ceil(remaining);
+  document.getElementById('timerBadge').textContent = displaySeconds;
+  document.getElementById('timerCard').classList.toggle('timer-card--warning', remaining <= WARNING_TIME && remaining > 0);
 }
 
 function handleTimeOut() {
@@ -324,9 +435,13 @@ function handleAnswerClick(selectedIndex, button, clickRenderId) {
   });
 
   if (isCorrect) {
-    const elapsed = QUESTION_TIME - timeLeft;
-    const tier = SCORE_TIERS.find(t => elapsed <= t.maxElapsed);
-    state.score += tier ? tier.points : 0;
+    if (state.mode === 'quick') {
+      state.score += QUICK_GAME_CORRECT_POINTS;
+    } else {
+      const elapsed = getElapsedSeconds();
+      const tier = SCORE_TIERS.find(t => elapsed <= t.maxElapsed);
+      state.score += tier ? tier.points : 0;
+    }
     document.getElementById('scoreBadge').textContent = `${state.score} נק'`;
   }
 
@@ -350,20 +465,27 @@ async function showResultScreen(poolExhausted = false) {
 
   const correctCount = state.history.filter(entry => entry.isCorrect).length;
   const profile = getPlayerProfile() || { name: 'אורח', avatar: '🙂' };
-  const categoryTitle = CATEGORY_DATA[state.category] ? CATEGORY_DATA[state.category].title : state.category;
+  const categoryTitle = state.mode === 'quick'
+    ? 'אתגר מהיר'
+    : (CATEGORY_DATA[state.category] ? CATEGORY_DATA[state.category].title : state.category);
+
+  const isPerfect = state.answeredCount > 0 && correctCount === state.answeredCount;
+  const accuracyRatio = state.answeredCount > 0 ? correctCount / state.answeredCount : 0;
 
   const result = {
     title: poolExhausted ? 'עניתם על כל השאלות!' : 'הזמן נגמר!',
     scoreText: `צברתם ${state.score} נקודות`,
-    accuracyText: `הצלחתם לענות נכון על ${correctCount} מתוך ${state.answeredCount} שאלות שנענו`,
+    accuracyText: `הצלחתם לענות נכון על ${correctCount} מתוך ${state.answeredCount} שאלות שנענו (${Math.round(accuracyRatio * 100)}%)`,
     history: state.history,
+    mode: state.mode,
     category: state.category,
     subCategory: state.subCategory,
     rankInfo: '',
+    celebration: 'none',
   };
 
   try {
-    const { rank, total } = await addLeaderboardEntry({
+    const { rank, total, isNewBest } = await addLeaderboardEntry({
       playerId: getOrCreatePlayerId(),
       name: profile.name,
       avatar: profile.avatar,
@@ -371,9 +493,11 @@ async function showResultScreen(poolExhausted = false) {
       category: categoryTitle,
     });
     result.rankInfo = `המיקום שלכם בלוח התוצאות: #${rank} מתוך ${total}`;
+    result.celebration = (isNewBest || isPerfect) ? 'big' : (accuracyRatio >= 0.8 ? 'small' : 'none');
   } catch (err) {
     console.error('Leaderboard error:', err.code || '', err.message || err);
     result.rankInfo = 'לא ניתן היה לטעון את לוח התוצאות כרגע';
+    result.celebration = isPerfect ? 'big' : (accuracyRatio >= 0.8 ? 'small' : 'none');
   }
 
   try {

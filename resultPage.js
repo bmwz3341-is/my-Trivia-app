@@ -23,6 +23,7 @@ function initResultPage() {
   document.getElementById('resultTitle').textContent = result.title;
   document.getElementById('resultScore').textContent = result.scoreText;
   document.getElementById('resultAccuracy').textContent = result.accuracyText;
+  document.getElementById('resultAccuracy').classList.add('result-accuracy--blink');
   document.getElementById('leaderboardRankInfo').textContent = result.rankInfo;
 
   const list = document.getElementById('resultHistoryList');
@@ -43,7 +44,9 @@ function initResultPage() {
     window.location.href = 'leaderboardPage.html';
   });
   document.getElementById('restartButton').addEventListener('click', () => {
-    window.location.href = `questPageTrivia.html?category=${encodeURIComponent(result.category)}&sub=${encodeURIComponent(result.subCategory)}`;
+    window.location.href = result.mode === 'quick'
+      ? 'questPageTrivia.html?mode=quick'
+      : `questPageTrivia.html?category=${encodeURIComponent(result.category)}&sub=${encodeURIComponent(result.subCategory)}`;
   });
   document.getElementById('homeButton').addEventListener('click', () => {
     window.location.href = 'index.html';
@@ -54,4 +57,8 @@ function initResultPage() {
   });
 
   triggerLeaderboardButtonBlink('leaderboardNavButton');
+
+  if (result.celebration === 'big' || result.celebration === 'small') {
+    setTimeout(() => launchBalloonCelebration(result.celebration), 400);
+  }
 }

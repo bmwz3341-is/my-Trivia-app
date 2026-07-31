@@ -10,9 +10,12 @@ async function addLeaderboardEntry({ playerId, name, avatar, score, category }, 
   const ref = leaderboardCollectionRef(collectionName);
   const docRef = ref.doc(playerId);
 
+  let isNewBest = true;
   await firebase.firestore().runTransaction(async (tx) => {
     const doc = await tx.get(docRef);
-    const bestScore = doc.exists ? Math.max(doc.data().score, score) : score;
+    const previousBest = doc.exists ? doc.data().score : null;
+    isNewBest = previousBest === null || score > previousBest;
+    const bestScore = previousBest !== null ? Math.max(previousBest, score) : score;
     tx.set(docRef, {
       name,
       avatar,
@@ -34,6 +37,7 @@ async function addLeaderboardEntry({ playerId, name, avatar, score, category }, 
     entry,
     rank: higherScoresSnapshot.size + 1,
     total: totalSnapshot.size,
+    isNewBest,
   };
 }
 
