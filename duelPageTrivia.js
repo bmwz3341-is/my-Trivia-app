@@ -17,6 +17,7 @@ const duelState = {
   answeredThisQuestion: false,
   lastAdvanceAttemptIndex: -1,
   finished: false,
+  musicStarted: false,
   history: [],
 };
 
@@ -94,10 +95,16 @@ function handleDuelSnapshotUnsafe(data) {
 
   showDuelWaiting(false);
 
+  if (!duelState.musicStarted) {
+    duelState.musicStarted = true;
+    startBackgroundMusic();
+  }
+
   if (data.status === 'finished') {
     if (!duelState.finished) {
       duelState.finished = true;
       stopDuelTimer();
+      stopBackgroundMusic();
       showDuelResult(data).catch((err) => console.error('Duel result render failed:', err));
     }
     return;

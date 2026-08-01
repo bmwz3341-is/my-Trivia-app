@@ -128,6 +128,7 @@ async function initQuestPage() {
   });
 
   startGlobalTimer();
+  startBackgroundMusic();
   renderQuestion();
 }
 
@@ -462,6 +463,7 @@ function handleNextClick() {
 async function showResultScreen(poolExhausted = false) {
   stopTimer();
   stopGlobalTimer();
+  stopBackgroundMusic();
 
   const correctCount = state.history.filter(entry => entry.isCorrect).length;
   const profile = getPlayerProfile() || { name: 'אורח', avatar: '🙂' };
