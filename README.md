@@ -5,7 +5,7 @@
 ## טכנולוגיה
 
 - **JavaScript טהור (ES6)** — ללא פריימוורק, ללא bundler, ללא TypeScript.
-- **Firebase** (תלות יחידה ב-`package.json`, גרסה `^12.16.0`) — Firestore לנתונים בזמן אמת (דו-קרב, לוח תוצאות) ו-Anonymous Auth לזיהוי שחקנים.
+- **Firebase** (תלות יחידה ב-`package.json`, גרסה `^12.16.0`) — Firestore לנתונים בזמן אמת (דו-קרב, לוח תוצאות), Anonymous Auth לזיהוי שחקנים, ו-Analytics (GA4) למעקב שימוש.
 - **localStorage** — שמירת הגדרות, תור שאלות (כדי למנוע חזרה על שאלות), ותוצאות שיא מקומיות.
 - **Google Fonts (Rubik)** — הפונט הראשי של הממשק.
 - קובץ **`questions.json`** — מאגר שאלות טריוויה סטטי, מאורגן לפי קטגוריה → תת-קטגוריה → מערך שאלות.
@@ -86,3 +86,11 @@ npm install   # מתקין את חבילת firebase
 ```
 
 ואז הגישו את התיקייה עם כל שרת סטטי (Live Server / `npx serve` וכו').
+
+## פריסה (Deployment)
+
+האתר מאורח ב-**Vercel**, מחובר ל-repo הזה ב-GitHub — כל `git push` ל-`main` מפרסם אוטומטית גרסה חדשה. אין צורך בפקודת deploy ידנית. Firebase (Auth, Firestore, Analytics) נשאר ללא שינוי בכל מקרה — האירוח משפיע רק על מקום ההגשה של קבצי ה-HTML/CSS/JS הסטטיים.
+
+## Analytics
+
+מחובר Google Analytics (GA4) דרך Firebase Analytics — מוגדר ב-`firebaseConfig.js` ונטען בכל 7 עמודי ה-HTML. דוחות רגילים (לא Realtime) מתעדכנים בפיגור של עד 24-48 שעות; לבדיקה מיידית אחרי דיפלוי יש להשתמש בדוח Realtime ב-Google Analytics.

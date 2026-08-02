@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-"Tick Tock Trivia" — a Hebrew (RTL), speed-based trivia game running entirely client-side. Plain **vanilla JavaScript (ES6)**, HTML, and CSS — no framework (no React/Vue/Angular), no bundler, no TypeScript, no build step. The only npm dependency is `firebase` (`^12.16.0`), and even that is unused in favor of the Firebase **compat SDK loaded via CDN `<script>` tags** in each HTML file (`firebase-app-compat.js`, `firebase-auth-compat.js`, `firebase-firestore-compat.js`) — `firebaseConfig.js` just calls `firebase.initializeApp(...)`.
+"Tick Tock Trivia" — a Hebrew (RTL), speed-based trivia game running entirely client-side. Plain **vanilla JavaScript (ES6)**, HTML, and CSS — no framework (no React/Vue/Angular), no bundler, no TypeScript, no build step. The only npm dependency is `firebase` (`^12.16.0`), and even that is unused in favor of the Firebase **compat SDK loaded via CDN `<script>` tags** in each HTML file (`firebase-app-compat.js`, `firebase-auth-compat.js`, `firebase-firestore-compat.js`, `firebase-analytics-compat.js`) — `firebaseConfig.js` calls `firebase.initializeApp(...)` and `firebase.analytics()`.
 
 There is no test suite, linter, or bundler configured — nothing to run for build/lint/test.
 
@@ -15,6 +15,16 @@ npm install       # only installs the (unused) firebase package from package.jso
 ```
 
 Serve the folder with any static file server (e.g. VSCode Live Server, `npx serve`) and open `index.html`. **Do not open via `file://`** — Firebase Auth/Firestore require an `http(s)://` origin.
+
+## Deployment
+
+Hosted on **Vercel**, connected to the `bmwz3341-is/my-Trivia-app` GitHub repo — every `git push` to `main` auto-deploys, live at `my-trivia-app-one.vercel.app`. There is no Firebase Hosting config in this repo (no `firebase.json` / `.firebaserc`) — hosting was deliberately moved off Firebase Hosting to Vercel; Firebase itself (Auth, Firestore, Analytics) is unaffected since those are backend services independent of where the static files are served from.
+
+Any new hosting domain (Vercel preview URLs, custom domains, etc.) must be added to **Firebase Console → Authentication → Settings → Authorized domains**, or Anonymous Auth (and therefore duel mode) will fail from that origin.
+
+## Analytics
+
+Google Analytics (GA4) is wired through Firebase Analytics — `measurementId: 'G-8H81LKJF3C'` in `firebaseConfig.js`, initialized via `firebase.analytics()`. All 7 page HTML files load `firebase-analytics-compat.js` before `firebaseConfig.js`. Standard (non-Realtime) GA reports lag ~24-48h behind live traffic; use the Realtime report to verify tracking immediately after a deploy.
 
 ## Architecture
 
