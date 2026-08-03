@@ -1,6 +1,6 @@
 const BALLOON_CELEBRATION_CONFIG = {
   big: {
-    count: 112,
+    count: 448,
     icons: ['🎈', '🎉', '✨', '❤️', '🏆'],
     colors: ['#FF5E5E', '#FFC93C', '#4DD9C4', '#6C7CFF', '#FF7CE5'],
     sizeRange: [24, 44],
@@ -8,7 +8,7 @@ const BALLOON_CELEBRATION_CONFIG = {
     spawnSpread: 2400,
   },
   small: {
-    count: 32,
+    count: 64,
     icons: ['🎈', '✨'],
     colors: ['#4DD9C4', '#6C7CFF'],
     sizeRange: [20, 28],
