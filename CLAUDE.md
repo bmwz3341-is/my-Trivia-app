@@ -26,6 +26,12 @@ Any new hosting domain (Vercel preview URLs, custom domains, etc.) must be added
 
 Google Analytics (GA4) is wired through Firebase Analytics — `measurementId: 'G-8H81LKJF3C'` in `firebaseConfig.js`, initialized via `firebase.analytics()`. All 7 page HTML files load `firebase-analytics-compat.js` before `firebaseConfig.js`. Standard (non-Realtime) GA reports lag ~24-48h behind live traffic; use the Realtime report to verify tracking immediately after a deploy.
 
+## Ads (Google AdSense)
+
+The site is linked to Google AdSense (publisher ID `ca-pub-1663882705316802`) — the verification `<script async src="...adsbygoogle.js?client=ca-pub-1663882705316802">` tag is already in the `<head>` of all 7 page HTML files. As of 2026-08-03 the site is still pending Google's review/approval (site verification + review request steps are done; a consent message for EEA users was set up via Google's own CMP). No ads render until that review completes.
+
+Planned next step once approved: enable **Anchor ads only** (sticky bottom banner, via AdSense's Auto ads dashboard setting, not hand-built) on all pages — chosen over a manual fixed `<div>` because Google's anchor ad ships with a required close (✕) button and responsive sizing out of the box. `leaderboardPage.css`, `questPageTrivia.css`, and `subCategoryPage.css` each have a `.back-button` fixed at `bottom: 16px` that will need its offset raised (e.g. to `~76px`) once the anchor ad is live, to avoid the ad overlapping/occluding that button.
+
 ## Architecture
 
 ### No modules — scripts are globals loaded by `<script>` order
