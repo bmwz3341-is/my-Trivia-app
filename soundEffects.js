@@ -14,6 +14,14 @@ function getAudioContext() {
   return audioCtx;
 }
 
+// Category/sub-category navigation into questPageTrivia.html happens synchronously inside a
+// click handler (see subCategoryPage.js), and WebKit's "sticky" user activation from that click
+// can still be in effect for a brief window after the new document starts loading. Priming the
+// context here - at page-script-evaluation time, before questPageTrivia.js's DOMContentLoaded/
+// fetch delay would otherwise burn through that window - lets it come up already resumed instead
+// of needing another real tap, restoring the tick sound's old "just works on question 1" feel.
+getAudioContext();
+
 function playTone(ctx, { frequency, startTime, duration, type = 'sine', peakGain = 0.2, destination }) {
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
