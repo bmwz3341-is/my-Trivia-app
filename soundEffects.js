@@ -170,8 +170,7 @@ const MUSIC_GAIN = 0.35;
 
 let musicSessionRequested = false;
 let musicAudioEl = null;
-let musicGainNode = null;
-let musicSourceNode = null;
+let musicFadeRaf = null;
 
 // Call once when a game session (solo round or duel) actually begins.
 function startBackgroundMusic() {
@@ -186,42 +185,45 @@ function stopBackgroundMusic() {
   stopMusicPlayback();
 }
 
+// Played as a plain HTMLMediaElement (its own .volume, no AudioContext/MediaElementSource)
+// deliberately: routing it through the shared AudioContext used by the oscillator-based tick
+// sound tied the tick's autoplay gating to the music element's stricter one, so on iOS the
+// suspended context silenced ticks too until the music itself got unlocked. Keeping them on
+// separate playback paths lets ticks work as soon as the context is resumed, independent of
+// the music element's own unlock state.
 function restartMusicPlayback() {
   stopMusicPlayback();
   if (!musicSessionRequested || !getTriviaSettings().backgroundMusic) return;
-  const ctx = getAudioContext();
-  if (!ctx) return;
 
   musicAudioEl = new Audio(MUSIC_TRACK_URL);
   musicAudioEl.loop = true;
-
-  musicGainNode = ctx.createGain();
-  musicGainNode.gain.value = MUSIC_GAIN;
-  musicGainNode.connect(ctx.destination);
-
-  musicSourceNode = ctx.createMediaElementSource(musicAudioEl);
-  musicSourceNode.connect(musicGainNode);
-
+  musicAudioEl.volume = MUSIC_GAIN;
   musicAudioEl.play().catch(() => {});
 }
 
 function stopMusicPlayback() {
-  if (musicGainNode && audioCtx) {
-    const now = audioCtx.currentTime;
-    musicGainNode.gain.cancelScheduledValues(now);
-    musicGainNode.gain.setValueAtTime(musicGainNode.gain.value, now);
-    musicGainNode.gain.linearRampToValueAtTime(0, now + MUSIC_FADE_OUT_SEC);
+  if (musicFadeRaf) {
+    cancelAnimationFrame(musicFadeRaf);
+    musicFadeRaf = null;
   }
   if (musicAudioEl) {
     const audioEl = musicAudioEl;
-    setTimeout(() => {
-      audioEl.pause();
-      audioEl.currentTime = 0;
-    }, MUSIC_FADE_OUT_SEC * 1000);
+    const startVolume = audioEl.volume;
+    const startTime = performance.now();
+    const fadeStep = () => {
+      const t = Math.min((performance.now() - startTime) / (MUSIC_FADE_OUT_SEC * 1000), 1);
+      audioEl.volume = startVolume * (1 - t);
+      if (t < 1) {
+        musicFadeRaf = requestAnimationFrame(fadeStep);
+      } else {
+        musicFadeRaf = null;
+        audioEl.pause();
+        audioEl.currentTime = 0;
+      }
+    };
+    musicFadeRaf = requestAnimationFrame(fadeStep);
   }
   musicAudioEl = null;
-  musicGainNode = null;
-  musicSourceNode = null;
 }
 
 window.addEventListener('triviaSettingsChanged', () => {
