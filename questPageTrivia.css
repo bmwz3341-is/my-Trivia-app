@@ -683,16 +683,16 @@ html[data-theme="amoled"] .question-text {
 .result-celebration-button {
   background: linear-gradient(160deg, #FF3D81, #6C2BD9);
   color: #ffffff;
-  animation: result-celebration-pulse 1s ease-in-out infinite;
+  animation: result-celebration-blink 0.5s ease-in-out 50;
 }
 
 .result-celebration-button[hidden] {
   display: none;
 }
 
-@keyframes result-celebration-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
+@keyframes result-celebration-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
 }
 
 .balloon-overlay {
