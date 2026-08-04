@@ -162,7 +162,7 @@ html[data-theme="amoled"] .home-screen {
   font-weight: 900;
   font-size: 26px;
   text-align: left;
-  margin-top: 50px;
+  margin-top: 40px;
 }
 
 .app-subtitle {
@@ -278,7 +278,7 @@ html[data-theme="amoled"] .home-screen {
   text-align: right;
   border: none;
   border-radius: 16px;
-  padding: 8px 14px;
+  padding: 11px 14px;
   cursor: pointer;
   color: #ffffff;
   box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.4);
