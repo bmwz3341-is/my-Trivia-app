@@ -228,6 +228,27 @@ window.addEventListener('triviaSettingsChanged', () => {
   if (musicSessionRequested) restartMusicPlayback();
 });
 
+// iOS Safari only lets an AudioContext resume from inside a real user-gesture event handler.
+// startBackgroundMusic()/startTickingClock() fire from the round's DOMContentLoaded handler,
+// which isn't a gesture, so the context stays suspended and both stay silent - until something
+// like a real tap (e.g. the settings toggle's click handler) happens to resume it later. Prime
+// the context on the page's first genuine tap/click/key instead of waiting for that.
+(function unlockAudioOnFirstGesture() {
+  const unlock = () => {
+    document.removeEventListener('touchend', unlock, true);
+    document.removeEventListener('mousedown', unlock, true);
+    document.removeEventListener('keydown', unlock, true);
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+    if (musicSessionRequested && (!musicAudioEl || musicAudioEl.paused)) {
+      restartMusicPlayback();
+    }
+  };
+  document.addEventListener('touchend', unlock, true);
+  document.addEventListener('mousedown', unlock, true);
+  document.addEventListener('keydown', unlock, true);
+})();
+
 // Win celebration: applause + crowd cheer. Rendered offline as a real 16-bit PCM WAV
 // (broadband highpass/lowpass shaping, not narrow resonant bandpass, so it reads as a
 // percussive clap/crowd swell instead of an electronic tone) and embedded below as a
