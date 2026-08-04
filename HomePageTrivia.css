@@ -21,14 +21,15 @@ button {
   width: 100vw;
   max-width: 560px;
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 20px;
+  gap: 12px;
   background: linear-gradient(160deg, #FF3D81, #6C2BD9);
   box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
-  padding: 28px 22px 48px;
+  padding: 18px 20px 22px;
   direction: rtl;
 }
 
@@ -66,6 +67,7 @@ html[data-theme="amoled"] .home-screen {
 
   .app-subtitle {
     font-size: 20px;
+    line-height: 1.7;
   }
 
   .quick-game-button,
@@ -158,16 +160,16 @@ html[data-theme="amoled"] .home-screen {
 .app-title {
   color: #ffffff;
   font-weight: 900;
-  font-size: 34px;
+  font-size: 26px;
   text-align: left;
-  margin-top: 40px;
+  margin-top: 10px;
 }
 
 .app-subtitle {
   color: #ffffff;
   opacity: 0.92;
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.5;
   font-weight: 500;
   text-align: right;
 }
@@ -180,7 +182,7 @@ html[data-theme="amoled"] .home-screen {
 }
 
 .quick-game-button {
-  margin-top: 40px;
+  margin-top: 18px;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -188,8 +190,8 @@ html[data-theme="amoled"] .home-screen {
   background: #22D3EE;
   color: #141110;
   font-weight: 900;
-  font-size: 22px;
-  padding: 14px 16px;
+  font-size: 19px;
+  padding: 12px 16px;
   border: none;
   border-radius: 999px;
   box-shadow: 0 5px 0 #0F9BAA;
@@ -215,8 +217,8 @@ html[data-theme="amoled"] .home-screen {
   border: 2px solid rgba(255, 255, 255, 0.55);
   color: #ffffff;
   font-weight: 700;
-  font-size: 22px;
-  padding: 12px 16px;
+  font-size: 18px;
+  padding: 10px 16px;
   border-radius: 999px;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease;
@@ -244,13 +246,13 @@ html[data-theme="amoled"] .home-screen {
   border: 1px solid rgba(255, 255, 255, 0.45);
   color: #ffffff;
   font-weight: 700;
-  font-size: 22px;
-  padding: 12px 16px;
+  font-size: 18px;
+  padding: 10px 16px;
   border-radius: 999px;
 }
 
 .leaderboard-nav-button.leaderboard-nav-button--home span:first-child {
-  font-size: 34px;
+  font-size: 28px;
 }
 
 .leaderboard-nav-button.leaderboard-nav-button--home:hover {
@@ -265,8 +267,8 @@ html[data-theme="amoled"] .home-screen {
 .category-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .category-card {
@@ -275,8 +277,8 @@ html[data-theme="amoled"] .home-screen {
   align-items: flex-start;
   text-align: right;
   border: none;
-  border-radius: 20px;
-  padding: 10px 16px;
+  border-radius: 16px;
+  padding: 8px 14px;
   cursor: pointer;
   color: #ffffff;
   box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.4);
@@ -310,15 +312,15 @@ html[data-theme="amoled"] .home-screen {
 }
 
 .category-card__title {
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 900;
 }
 
 .category-card__subtitle {
-  font-size: 15px;
+  font-size: 12.5px;
   font-weight: 400;
   opacity: 0.75;
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .category-card--orange .category-card__subtitle,
@@ -330,7 +332,7 @@ html[data-theme="amoled"] .home-screen {
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .category-card__difficulty {
@@ -339,8 +341,8 @@ html[data-theme="amoled"] .home-screen {
 }
 
 .category-card__difficulty span {
-  width: 26px;
-  height: 5px;
+  width: 22px;
+  height: 4px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.5);
 }
