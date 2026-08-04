@@ -253,9 +253,11 @@ function openSettingsModal() {
   updateThemeSelection(settings.theme);
 
   document.getElementById('settingsModalOverlay').hidden = false;
+  window.dispatchEvent(new CustomEvent('triviaSettingsOpened'));
 }
 
 function closeSettingsModal() {
   const overlay = document.getElementById('settingsModalOverlay');
   if (overlay) overlay.hidden = true;
+  window.dispatchEvent(new CustomEvent('triviaSettingsClosed'));
 }

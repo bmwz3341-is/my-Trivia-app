@@ -59,6 +59,14 @@ async function initDuelPage() {
     if (event.target === duelScoreInfoOverlay) closeDuelScoreInfo();
   });
 
+  document.getElementById('settingsButton').addEventListener('click', () => {
+    openSettingsModal();
+    stopDuelTimer();
+  });
+  window.addEventListener('triviaSettingsClosed', () => {
+    if (duelTimerParams && !duelState.answeredThisQuestion) resumeDuelTimer();
+  });
+
   duelState.uid = await ensurePlayerAuth();
 
   const response = await fetch('questions.json', { cache: 'no-store' });

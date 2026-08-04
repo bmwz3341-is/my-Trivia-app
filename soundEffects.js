@@ -157,43 +157,21 @@ function stopTickingClock() {
   }
 }
 
-// Driving background music for a game session: a 16th-note step sequencer (pulsing bass +
-// syncopated pluck arpeggio + off-beat hats) built from the same oscillator/click primitives
-// as the sound effects above - no audio file. startBackgroundMusic()/stopBackgroundMusic()
-// mark session intent; playback also reacts live to the backgroundMusic setting being toggled
-// mid-session (see the triviaSettingsChanged listener below), so the settings modal can mute
-// it instantly.
-const MUSIC_BPM = 112;
-const MUSIC_STEP_SEC = 60 / MUSIC_BPM / 4; // one 16th note
-const MUSIC_STEPS_PER_CHORD = 16; // one bar per chord
-const MUSIC_LOOKAHEAD_SEC = 0.5;
-const MUSIC_POLL_MS = 100;
+// Driving background music for a game session: a looping mp3 that plays for exactly as
+// long as the round's global timer runs. startBackgroundMusic()/stopBackgroundMusic() mark
+// session intent - called alongside startGlobalTimer()/stopGlobalTimer() by the page
+// controllers - so the track starts the moment answering begins and stops the moment the
+// round's clock ends. Playback also reacts live to the backgroundMusic setting being
+// toggled mid-session (see the triviaSettingsChanged listener below), so the settings modal
+// can mute it instantly.
+const MUSIC_TRACK_URL = 'sounds/prettyjohn1-soft-499242.mp3';
 const MUSIC_FADE_OUT_SEC = 0.6;
-const MUSIC_BASS_GAIN = 0.09;
-const MUSIC_ARP_GAIN = 0.05;
-const MUSIC_HAT_GAIN = 0.05;
-
-// Am - G - F - E: a cyclic ("Andalusian") progression whose raised 3rd on the E chord
-// keeps pulling the loop back around to Am, so it drives forward instead of sitting still.
-// Each entry is [bass note, ...chord tones for the arpeggio], voiced low to sit under the
-// answer/tick sound effects.
-const MUSIC_CHORDS = [
-  { bass: 110.00, tones: [220.00, 261.63, 329.63] }, // Am: A2 | A3 C4 E4
-  { bass: 98.00, tones: [196.00, 246.94, 293.66] }, // G: G2 | G3 B3 D4
-  { bass: 87.31, tones: [174.61, 220.00, 261.63] }, // F: F2 | F3 A3 C4
-  { bass: 82.41, tones: [164.81, 207.65, 246.94] }, // E: E2 | E3 G#3 B3
-];
-
-// Steps (of 16 per bar) that trigger each part - a four-on-two bass pulse, syncopated
-// arpeggio hits on beats 2 and 4, and an 8th-note off-beat hat for a bit of swing/drive.
-const MUSIC_BASS_STEPS = [0, 8];
-const MUSIC_ARP_STEPS = [4, 12];
-const MUSIC_HAT_STEPS = [2, 6, 10, 14];
+const MUSIC_GAIN = 0.35;
 
 let musicSessionRequested = false;
+let musicAudioEl = null;
 let musicGainNode = null;
-let musicPollId = null;
-let musicGeneration = 0;
+let musicSourceNode = null;
 
 // Call once when a game session (solo round or duel) actually begins.
 function startBackgroundMusic() {
@@ -214,61 +192,36 @@ function restartMusicPlayback() {
   const ctx = getAudioContext();
   if (!ctx) return;
 
+  musicAudioEl = new Audio(MUSIC_TRACK_URL);
+  musicAudioEl.loop = true;
+
   musicGainNode = ctx.createGain();
-  musicGainNode.gain.value = 1;
+  musicGainNode.gain.value = MUSIC_GAIN;
   musicGainNode.connect(ctx.destination);
 
-  const myGeneration = ++musicGeneration;
-  let globalStep = 0;
-  let arpToneIndex = 0;
-  let nextStepTime = ctx.currentTime + 0.1;
+  musicSourceNode = ctx.createMediaElementSource(musicAudioEl);
+  musicSourceNode.connect(musicGainNode);
 
-  const pollLoop = () => {
-    if (myGeneration !== musicGeneration) return;
-    while (nextStepTime < ctx.currentTime + MUSIC_LOOKAHEAD_SEC) {
-      const stepInBar = globalStep % MUSIC_STEPS_PER_CHORD;
-      const chord = MUSIC_CHORDS[Math.floor(globalStep / MUSIC_STEPS_PER_CHORD) % MUSIC_CHORDS.length];
-
-      if (MUSIC_BASS_STEPS.includes(stepInBar)) {
-        playTone(ctx, {
-          frequency: chord.bass, startTime: nextStepTime, duration: 0.28,
-          type: 'triangle', peakGain: MUSIC_BASS_GAIN, destination: musicGainNode,
-        });
-      }
-      if (MUSIC_ARP_STEPS.includes(stepInBar)) {
-        playTone(ctx, {
-          frequency: chord.tones[arpToneIndex % chord.tones.length], startTime: nextStepTime, duration: 0.32,
-          type: 'sine', peakGain: MUSIC_ARP_GAIN, destination: musicGainNode,
-        });
-        arpToneIndex += 1;
-      }
-      if (MUSIC_HAT_STEPS.includes(stepInBar)) {
-        playClickAt(ctx, nextStepTime, {
-          filterFrequency: 7000, peakGain: MUSIC_HAT_GAIN, duration: 0.03, destination: musicGainNode,
-        });
-      }
-
-      globalStep += 1;
-      nextStepTime += MUSIC_STEP_SEC;
-    }
-    musicPollId = setTimeout(pollLoop, MUSIC_POLL_MS);
-  };
-  pollLoop();
+  musicAudioEl.play().catch(() => {});
 }
 
 function stopMusicPlayback() {
-  musicGeneration += 1;
-  if (musicPollId) {
-    clearTimeout(musicPollId);
-    musicPollId = null;
-  }
   if (musicGainNode && audioCtx) {
     const now = audioCtx.currentTime;
     musicGainNode.gain.cancelScheduledValues(now);
     musicGainNode.gain.setValueAtTime(musicGainNode.gain.value, now);
     musicGainNode.gain.linearRampToValueAtTime(0, now + MUSIC_FADE_OUT_SEC);
   }
+  if (musicAudioEl) {
+    const audioEl = musicAudioEl;
+    setTimeout(() => {
+      audioEl.pause();
+      audioEl.currentTime = 0;
+    }, MUSIC_FADE_OUT_SEC * 1000);
+  }
+  musicAudioEl = null;
   musicGainNode = null;
+  musicSourceNode = null;
 }
 
 window.addEventListener('triviaSettingsChanged', () => {

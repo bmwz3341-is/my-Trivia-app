@@ -71,6 +71,26 @@ Two independent timers run per solo round: a per-question timer (`QUESTION_TIME`
 
 Two Firestore collections: `leaderboard` (solo) and `duelLeaderboard`, both written via `addLeaderboardEntry()` in `leaderboard.js`. One doc per player (`playerId` as doc ID), updated transactionally to keep only the player's best score. Rank is computed by counting docs with a strictly higher score.
 
+### Sound & music (`soundEffects.js`)
+
+Most one-shot SFX (ticks, correct/wrong answer, button taps) are synthesized on the fly with Web Audio oscillators — no audio files. Background music and the two result-screen stingers are the exception: they play real `.mp3` files from the `sounds/` folder (not yet committed as of 2026-08) via plain `new Audio(...)` elements, not the oscillator engine:
+
+- **Background music** — `startBackgroundMusic()` / `stopBackgroundMusic()` loop `sounds/prettyjohn1-soft-499242.mp3` through a `MediaElementSource` → `GainNode` (so the existing fade-out and the `backgroundMusic` settings toggle still work); playback spans exactly the round's global timer, started/stopped alongside `startGlobalTimer()`/`stopGlobalTimer()` in the page controllers.
+- **Result stingers** (`resultPage.js`) — after a solo round, `sounds/driken5482-applause-cheer-236786.mp3` plays if `result.accuracyRatio >= 0.8`, otherwise `sounds/soundreality-downfall-3-208028.mp3` plays, ~400ms after the result screen animates in (alongside the balloon celebration, when shown).
+
+### Settings modal is shared across pages
+
+`TriviaSettings.js`/`TriviaSettings.css` (the settings modal, gear icon, and its `.settings-gear-button` style) are no longer home-page-only — `questPageTrivia.html` and `duelPageTrivia.html` also load `TriviaSettings.css` and render a `#settingsButton`, so players can toggle sound/haptics/theme mid-round instead of only from the home screen. Opening/closing the modal dispatches global `triviaSettingsOpened` / `triviaSettingsClosed` `CustomEvent`s on `window`; `questPageTrivia.js` and `duelPageTrivia.js` listen for `triviaSettingsClosed` to resume their timers (mirroring how the existing score-info modal already paused/resumed them), so the shared `TriviaSettings.js` stays unaware of any page-specific timer logic. The score-info button (`.score-info-button`, the "?" icon) was moved from an absolutely-positioned spot inside the header to `position: fixed; top: 64px; right: 16px` (directly under the player badge) to avoid colliding with the gear icon at `top: 16px; left: 16px`.
+
+### Tablet breakpoints (iPad mini/Air and iPad Pro)
+
+The layout was built mobile-first with no upper bound (`width: 100vw`, and per-element `max-width: 420px` throughout `questPageTrivia.css`), so on tablet-width viewports it rendered as a small phone layout floating in the middle of a mostly-empty page. `HomePageTrivia.css` and `questPageTrivia.css` (shared by the duel screen) now add two media-query tiers that widen the shared max-widths and scale up typography/spacing/icon sizes:
+
+- `@media (min-width: 700px)` — iPad mini/Air-class widths.
+- `@media (min-width: 1000px)` — iPad Pro-class widths, scaled up again on top of the 700px tier.
+
+`HomePageTrivia.css`'s `.home-screen` is also capped at a `max-width` and centered (`margin: 0 auto`) with `justify-content: center`, so on very tall/wide viewports the panel no longer stretches full-bleed or leaves a large empty gap below the content. Below 700px, nothing changes from the original mobile layout.
+
 ### Typeface
 
 The UI font is **Rubik** (Google Fonts), loaded per-page via `<link>` tags in each HTML file's `<head>` (no self-hosting, no `@font-face`) and referenced as `font-family: 'Rubik', 'Segoe UI', Arial, sans-serif` in each page's CSS. Since there's no shared head/layout file, changing the font means updating the Google Fonts `<link>` in every page HTML plus the `font-family` rule in every page CSS individually.

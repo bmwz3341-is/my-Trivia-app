@@ -127,6 +127,17 @@ async function initQuestPage() {
     }
   });
 
+  document.getElementById('settingsButton').addEventListener('click', () => {
+    openSettingsModal();
+    pausedAt = Date.now();
+    stopTimer();
+    stopGlobalTimer();
+  });
+  window.addEventListener('triviaSettingsClosed', () => {
+    unpause();
+    resumeTimers();
+  });
+
   startGlobalTimer();
   startBackgroundMusic();
   renderQuestion();
@@ -484,6 +495,7 @@ async function showResultScreen(poolExhausted = false) {
     subCategory: state.subCategory,
     rankInfo: '',
     celebration: 'none',
+    accuracyRatio,
   };
 
   try {

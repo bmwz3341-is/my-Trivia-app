@@ -59,6 +59,15 @@ function initResultPage() {
   triggerLeaderboardButtonBlink('leaderboardNavButton');
 
   if (result.celebration === 'big' || result.celebration === 'small') {
-    setTimeout(() => launchBalloonCelebration(result.celebration), 400);
+    setTimeout(() => {
+      launchBalloonCelebration(result.celebration);
+      if (result.accuracyRatio >= 0.8) {
+        new Audio('sounds/driken5482-applause-cheer-236786.mp3').play().catch(() => {});
+      }
+    }, 400);
+  } else if (result.accuracyRatio < 0.8) {
+    setTimeout(() => {
+      new Audio('sounds/soundreality-downfall-3-208028.mp3').play().catch(() => {});
+    }, 400);
   }
 }

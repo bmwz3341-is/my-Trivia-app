@@ -71,10 +71,10 @@ body {
 }
 
 .score-info-button {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  position: fixed;
+  top: 64px;
+  right: 16px;
+  z-index: 40;
   flex-shrink: 0;
   width: 36px;
   height: 36px;
@@ -360,6 +360,100 @@ html[data-theme="amoled"] .question-card {
 
 html[data-theme="amoled"] .question-text {
   color: #F5F5F5;
+}
+
+/* Tablet+ (iPad mini and up): everything on this page is capped at 420px
+   wide regardless of viewport, so on a tablet it reads as a small phone
+   layout floating in the middle of the screen — widen the shared max-width
+   and scale up the typography/timer to match. */
+@media (min-width: 700px) {
+  .quest-header,
+  .score-row,
+  .progress-track,
+  .card-stack,
+  .answers-grid,
+  .result-screen,
+  .modal {
+    max-width: 620px;
+  }
+
+  .category-title {
+    font-size: 26px;
+  }
+
+  .score-badge {
+    font-size: 16px;
+    padding: 8px 18px;
+  }
+
+  .global-timer {
+    width: clamp(64px, 10dvh, 110px);
+    height: clamp(64px, 10dvh, 110px);
+  }
+
+  .global-timer__time {
+    font-size: clamp(16px, 3dvh, 28px);
+  }
+
+  .question-text {
+    font-size: clamp(18px, 2.8dvh, 24px);
+  }
+
+  .answer-button {
+    font-size: 18px;
+  }
+
+  .quest-screen {
+    --card-h: clamp(110px, 18dvh, 200px);
+  }
+}
+
+/* Large tablet+ (iPad Pro and up): scale up once more. */
+@media (min-width: 1000px) {
+  .quest-header,
+  .score-row,
+  .progress-track,
+  .card-stack,
+  .answers-grid,
+  .result-screen,
+  .modal {
+    max-width: 780px;
+  }
+
+  .category-title {
+    font-size: 32px;
+  }
+
+  .score-badge {
+    font-size: 20px;
+    padding: 10px 22px;
+  }
+
+  .global-timer {
+    width: clamp(90px, 12dvh, 140px);
+    height: clamp(90px, 12dvh, 140px);
+  }
+
+  .global-timer__time {
+    font-size: clamp(20px, 3.4dvh, 34px);
+  }
+
+  .question-text {
+    font-size: clamp(22px, 3.2dvh, 30px);
+  }
+
+  .answer-button {
+    font-size: 22px;
+    padding: clamp(12px, 2dvh, 20px);
+  }
+
+  .answers-grid--boolean .answer-button {
+    padding: 24px;
+  }
+
+  .quest-screen {
+    --card-h: clamp(140px, 22dvh, 260px);
+  }
 }
 
 .answers-grid {

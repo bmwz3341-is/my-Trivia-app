@@ -1,5 +1,25 @@
 /* Settings screen (TriviaSettings.js) — dark purple/pink gradient modal matching the rest of the app */
 
+.settings-gear-button {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.settings-gear-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .settings-modal-overlay {
   position: fixed;
   inset: 0;

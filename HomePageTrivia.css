@@ -17,31 +17,14 @@ button {
   font-family: inherit;
 }
 
-.settings-gear-button {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 40;
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.settings-gear-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
 .home-screen {
   width: 100vw;
+  max-width: 560px;
   min-height: 100vh;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 20px;
   background: linear-gradient(160deg, #FF3D81, #6C2BD9);
   box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
@@ -49,9 +32,127 @@ button {
   direction: rtl;
 }
 
+/* On wide viewports, fill the empty sides with the same gradient
+   so the centered "app" panel doesn't float on a blank background */
+@media (min-width: 600px) {
+  html, body {
+    background: linear-gradient(160deg, #FF3D81, #6C2BD9);
+  }
+
+  html[data-theme="amoled"] body {
+    background: #000000;
+  }
+}
+
 /* AMOLED dark theme — true-black page background, set via TriviaSettings.js */
 html[data-theme="amoled"] .home-screen {
   background: #000000;
+}
+
+/* Tablet+ (iPad mini and up): scale the panel and typography up so content
+   reads proportionally instead of looking like a small phone layout floating
+   in the middle of a much bigger screen. */
+@media (min-width: 700px) {
+  .home-screen {
+    max-width: 720px;
+    padding: 40px 40px 64px;
+    gap: 26px;
+  }
+
+  .app-title {
+    font-size: 44px;
+    margin-top: 56px;
+  }
+
+  .app-subtitle {
+    font-size: 20px;
+  }
+
+  .quick-game-button,
+  .vs-player-button,
+  .leaderboard-nav-button.leaderboard-nav-button--home {
+    font-size: 26px;
+    padding: 18px 20px;
+  }
+
+  .leaderboard-nav-button.leaderboard-nav-button--home span:first-child {
+    font-size: 40px;
+  }
+
+  .category-grid {
+    gap: 16px;
+  }
+
+  .category-card {
+    padding: 16px 22px;
+    border-radius: 24px;
+  }
+
+  .category-card__title {
+    font-size: 24px;
+  }
+
+  .category-card__subtitle {
+    font-size: 18px;
+  }
+
+  .category-card__difficulty span {
+    width: 32px;
+    height: 6px;
+  }
+}
+
+/* Large tablet+ (iPad Pro and up): scale up once more — the 700px tier reads
+   fine on iPad mini/Air but is still small relative to a 1024+ wide screen. */
+@media (min-width: 1000px) {
+  .home-screen {
+    max-width: 920px;
+    padding: 56px 56px 80px;
+    gap: 32px;
+  }
+
+  .app-title {
+    font-size: 56px;
+    margin-top: 64px;
+  }
+
+  .app-subtitle {
+    font-size: 24px;
+    line-height: 1.8;
+  }
+
+  .quick-game-button,
+  .vs-player-button,
+  .leaderboard-nav-button.leaderboard-nav-button--home {
+    font-size: 30px;
+    padding: 22px 24px;
+  }
+
+  .leaderboard-nav-button.leaderboard-nav-button--home span:first-child {
+    font-size: 46px;
+  }
+
+  .category-grid {
+    gap: 20px;
+  }
+
+  .category-card {
+    padding: 22px 28px;
+    border-radius: 28px;
+  }
+
+  .category-card__title {
+    font-size: 28px;
+  }
+
+  .category-card__subtitle {
+    font-size: 20px;
+  }
+
+  .category-card__difficulty span {
+    width: 38px;
+    height: 7px;
+  }
 }
 
 .app-title {
