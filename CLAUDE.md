@@ -91,6 +91,14 @@ The layout was built mobile-first with no upper bound (`width: 100vw`, and per-e
 
 `HomePageTrivia.css`'s `.home-screen` is also capped at a `max-width` and centered (`margin: 0 auto`) with `justify-content: center`, so on very tall/wide viewports the panel no longer stretches full-bleed or leaves a large empty gap below the content. Below 700px, nothing changes from the original mobile layout.
 
+### Home screen fits one screen on iPhone 16 Pro Max (no scroll)
+
+`HomePageTrivia.css`'s mobile (base, <700px) spacing — `.home-screen` padding/gap, `.app-title`/`.app-subtitle` sizing, and `.category-card` padding — was tuned in 2026-08 so the whole home screen (title, subtitle, 3 pill buttons, 4 category cards) fits on iPhone 16 Pro Max without vertical scrolling. Verified via Playwright at 430×932 and a conservative 430×786 (approximating Safari with an expanded toolbar).
+
+**Constraint:** `#settingsButton` and `#homePlayerBadgeContainer` are `position: fixed; top: 16px`, shared across `index.html`, `questPageTrivia.html`, and `duelPageTrivia.html`. `.app-title` is `text-align: left` with a full-width box, so its left portion sits directly under the gear icon (bottom edge ~56px from viewport top) — cutting `app-title`'s `margin-top` too low makes the fixed gear button visually overlap the title. Current mobile value is `margin-top: 40px` (a deliberately thin ~2px safety margin below the gear icon). The `700px`/`1000px` tablet tiers already override `app-title margin-top` explicitly (56px/64px) and are unaffected by mobile-tier changes — any future adjustment to mobile spacing here must re-check title-vs-gear overlap, not just whether total content height fits the viewport.
+
+**Testing note:** plain F12 DevTools (without Device Toolbar / Ctrl+Shift+M device emulation) renders at the desktop browser window's actual height, not an iPhone-sized viewport — since `.home-screen` centers shorter content via `justify-content: center`, this produces a large, expected empty gap above/below the content on desktop that does not appear on a real device. Use Device Toolbar with the target device selected to test this layout accurately.
+
 ### Typeface
 
 The UI font is **Rubik** (Google Fonts), loaded per-page via `<link>` tags in each HTML file's `<head>` (no self-hosting, no `@font-face`) and referenced as `font-family: 'Rubik', 'Segoe UI', Arial, sans-serif` in each page's CSS. Since there's no shared head/layout file, changing the font means updating the Google Fonts `<link>` in every page HTML plus the `font-family` rule in every page CSS individually.
