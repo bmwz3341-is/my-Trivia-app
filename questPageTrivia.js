@@ -138,9 +138,12 @@ async function initQuestPage() {
     resumeTimers();
   });
 
-  startGlobalTimer();
-  startBackgroundMusic();
-  renderQuestion();
+  document.getElementById('startGateButton').addEventListener('click', () => {
+    document.getElementById('startGateOverlay').hidden = true;
+    startGlobalTimer();
+    startBackgroundMusic();
+    renderQuestion();
+  }, { once: true });
 }
 
 function getQueueStorageKey() {
