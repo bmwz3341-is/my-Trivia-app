@@ -58,16 +58,27 @@ function initResultPage() {
 
   triggerLeaderboardButtonBlink('leaderboardNavButton');
 
-  if (result.celebration === 'big' || result.celebration === 'small') {
-    setTimeout(() => {
-      launchBalloonCelebration(result.celebration);
-      if (result.accuracyRatio >= 0.8) {
-        new Audio('sounds/driken5482-applause-cheer-236786.mp3').play().catch(() => {});
+  // iOS only allows audio playback in direct response to a real tap - the automatic
+  // setTimeout-triggered celebration this replaced played silently there. Gating the sound
+  // (and balloons, so they land together) behind a result-appropriate button tap guarantees
+  // it works, at the cost of it no longer firing fully automatically.
+  const celebrationButton = document.getElementById('resultCelebrationButton');
+  if (result.accuracyRatio >= 0.8) {
+    celebrationButton.textContent = 'כל הכבוד !';
+    celebrationButton.hidden = false;
+    celebrationButton.addEventListener('click', () => {
+      celebrationButton.hidden = true;
+      if (result.celebration === 'big' || result.celebration === 'small') {
+        launchBalloonCelebration(result.celebration);
       }
-    }, 400);
-  } else if (result.accuracyRatio < 0.8) {
-    setTimeout(() => {
+      new Audio('sounds/driken5482-applause-cheer-236786.mp3').play().catch(() => {});
+    }, { once: true });
+  } else {
+    celebrationButton.textContent = 'לא נורא בפעם הבאה 😉';
+    celebrationButton.hidden = false;
+    celebrationButton.addEventListener('click', () => {
+      celebrationButton.hidden = true;
       new Audio('sounds/soundreality-downfall-3-208028.mp3').play().catch(() => {});
-    }, 400);
+    }, { once: true });
   }
 }

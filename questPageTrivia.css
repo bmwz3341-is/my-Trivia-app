@@ -680,6 +680,21 @@ html[data-theme="amoled"] .question-text {
   border: 2px solid rgba(255, 255, 255, 0.35);
 }
 
+.result-celebration-button {
+  background: linear-gradient(160deg, #FF3D81, #6C2BD9);
+  color: #ffffff;
+  animation: result-celebration-pulse 1s ease-in-out infinite;
+}
+
+.result-celebration-button[hidden] {
+  display: none;
+}
+
+@keyframes result-celebration-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
 .balloon-overlay {
   position: fixed;
   inset: 0;
