@@ -1,0 +1,146 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Rubik', 'Segoe UI', Arial, sans-serif;
+}
+
+.legal-screen {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(160deg, #FF3D81, #6C2BD9);
+  padding: 24px 16px 96px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  direction: rtl;
+}
+
+html[data-theme="amoled"] .legal-screen {
+  background: #000000;
+}
+
+.back-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.legal-card {
+  width: 100%;
+  max-width: 640px;
+  margin-top: 72px;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 20px;
+  padding: 28px 24px 32px;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  color: #241b3a;
+}
+
+html[data-theme="amoled"] .legal-card {
+  background: #141118;
+  color: #f0e9ff;
+}
+
+.legal-title {
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  color: #6C2BD9;
+}
+
+html[data-theme="amoled"] .legal-title {
+  color: #c9a4ff;
+}
+
+.legal-updated {
+  font-size: 13px;
+  opacity: 0.65;
+  margin-bottom: 20px;
+}
+
+.legal-card h2 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 22px 0 8px;
+  color: #FF3D81;
+}
+
+html[data-theme="amoled"] .legal-card h2 {
+  color: #ff7fb0;
+}
+
+.legal-card p,
+.legal-card li {
+  font-size: 15px;
+  line-height: 1.75;
+  margin-bottom: 8px;
+}
+
+.legal-card ul {
+  padding-inline-start: 22px;
+  margin-bottom: 8px;
+}
+
+.legal-card a {
+  color: #6C2BD9;
+  font-weight: 600;
+}
+
+html[data-theme="amoled"] .legal-card a {
+  color: #c9a4ff;
+}
+
+.legal-card strong {
+  font-weight: 800;
+}
+
+/* Footer legal-links strip on the home screen */
+
+.legal-footer {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(2px);
+}
+
+.legal-footer a {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 10.5px;
+  text-decoration: none;
+}
+
+.legal-footer a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}

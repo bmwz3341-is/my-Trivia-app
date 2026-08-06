@@ -24,6 +24,20 @@
 
 לכל עמוד קובץ `.js` וקובץ `.css` תואמים באותו שם (לדוגמה `questPageTrivia.js` + `questPageTrivia.css`).
 
+### עמודי מדיניות ומשפט
+
+חמישה עמודים סטטיים נוספים, כולם משתמשים בסגנון משותף `legalPage.css` וב-`legalPage.js` (כפתור חזרה בלבד, ללא Firebase):
+
+| קובץ | תפקיד |
+|---|---|
+| `privacy.html` | מדיניות פרטיות |
+| `terms.html` | תנאי שימוש |
+| `cookies.html` | מדיניות עוגיות |
+| `about.html` | אודותינו |
+| `accessibility.html` | הצהרת נגישות (לפי תקנות שוויון זכויות לאנשים עם מוגבלות) |
+
+קישורים לחמשת העמודים מופיעים בפס תחתון קבוע (`.legal-footer`) במסך הבית (`index.html`) בלבד — לא בשאר העמודים. `accessibility.html` מכיל placeholder בשם רכז הנגישות (`[להשלמה - שם מלא]`) שיש להשלים לפני עלייה לאוויר.
+
 ## מודולי JavaScript עיקריים
 
 - **`firebaseConfig.js`** — אתחול חיבור Firebase (config + `initializeApp`).

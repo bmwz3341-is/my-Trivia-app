@@ -46,6 +46,10 @@ Each page has a matching `.html` + `.js` + `.css` triplet (e.g. `questPageTrivia
 
 "אתגר מהיר" (Quick Game) on the home page skips the category/sub-category steps entirely by picking a random category+subcategory from `questions.json` and navigating straight to `questPageTrivia.html`. Head-to-head duels follow a parallel path: `duelSetup.js` (category/sub-category picker modal) → `duelPageTrivia.html?room=<code>` → `duelResultPage.html`.
 
+### Legal pages
+
+Five static, Firebase-free pages — `privacy.html`, `terms.html`, `cookies.html`, `about.html`, `accessibility.html` (Privacy Policy, Terms of Use, Cookie Policy, About Us, and an Israeli-law accessibility statement) — added 2026-08-05 ahead of public launch. They share `legalPage.css` (same gradient-background/white-card visual language as the rest of the app) and `legalPage.js` (wires only the back button to `index.html`; no Firebase scripts loaded). `index.html` links to all five from a fixed `.legal-footer` strip at the bottom of the home screen — no other page links to them. `accessibility.html` has a `[להשלמה - שם מלא]` placeholder for the accessibility coordinator's name that must be filled in before launch (Israeli accessibility regulations require a named contact, not just an email).
+
 ### Question data (`questions.json`)
 
 Static JSON, shape: `{ [categoryKey]: { title, theme, subcategories: { [subKey]: { title, questions: [{ text, options[], correct }] } } } }`. Loaded via `fetch('questions.json', { cache: 'no-store' })` independently by each page that needs it (`subCategoryPage.js`, `questPageTrivia.js`, `duelSetup.js`, and `HomePageTrivia.js`'s quick-game picker) — there's no shared in-memory cache across page loads since each page is a fresh document.
@@ -98,6 +102,8 @@ The layout was built mobile-first with no upper bound (`width: 100vw`, and per-e
 **Constraint:** `#settingsButton` and `#homePlayerBadgeContainer` are `position: fixed; top: 16px`, shared across `index.html`, `questPageTrivia.html`, and `duelPageTrivia.html`. `.app-title` is `text-align: left` with a full-width box, so its left portion sits directly under the gear icon (bottom edge ~56px from viewport top) — cutting `app-title`'s `margin-top` too low makes the fixed gear button visually overlap the title. Current mobile value is `margin-top: 40px` (a deliberately thin ~2px safety margin below the gear icon). The `700px`/`1000px` tablet tiers already override `app-title margin-top` explicitly (56px/64px) and are unaffected by mobile-tier changes — any future adjustment to mobile spacing here must re-check title-vs-gear overlap, not just whether total content height fits the viewport.
 
 **Testing note:** plain F12 DevTools (without Device Toolbar / Ctrl+Shift+M device emulation) renders at the desktop browser window's actual height, not an iPhone-sized viewport — since `.home-screen` centers shorter content via `justify-content: center`, this produces a large, expected empty gap above/below the content on desktop that does not appear on a real device. Use Device Toolbar with the target device selected to test this layout accurately.
+
+As of 2026-08-05, `.category-card` mobile padding is `16px 14px` (grown from `11px 14px`, card height 69px → 79px) for a larger tap target, while still fitting without scrolling (content height 647px, ~99px of slack at the 786px conservative viewport).
 
 ### Typeface
 
