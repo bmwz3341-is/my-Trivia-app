@@ -369,3 +369,65 @@ html[data-theme="amoled"] .home-screen {
 .category-card--green .category-card__difficulty span:last-child {
   background: rgba(20, 17, 16, 0.25);
 }
+
+/* Real descriptive content, placed after the hero (.home-screen) in normal document
+   flow — reachable by scrolling, but adds nothing inside .home-screen itself so the
+   tuned no-scroll mobile hero layout is unaffected. */
+.home-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 28px 20px 64px;
+  direction: rtl;
+}
+
+.home-content__card {
+  width: 100%;
+  max-width: 560px;
+  color: #241b3a;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 20px;
+  padding: 24px 22px 28px;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+}
+
+.home-content__title {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 22px 0 8px;
+  color: #6C2BD9;
+}
+
+.home-content__title:first-child {
+  margin-top: 0;
+}
+
+.home-content__card p,
+.home-content__card li {
+  font-size: 15px;
+  line-height: 1.75;
+  margin-bottom: 8px;
+}
+
+.home-content__list {
+  padding-inline-start: 22px;
+  margin-bottom: 8px;
+}
+
+.home-content__card a {
+  color: #6C2BD9;
+  font-weight: 600;
+}
+
+html[data-theme="amoled"] .home-content__card {
+  background: #141118;
+  color: #f0e9ff;
+}
+
+html[data-theme="amoled"] .home-content__title {
+  color: #c9a4ff;
+}
+
+html[data-theme="amoled"] .home-content__card a {
+  color: #c9a4ff;
+}

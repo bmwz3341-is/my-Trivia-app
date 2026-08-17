@@ -94,6 +94,9 @@ async function initQuestPage() {
 
   document.getElementById('categoryTitle').textContent = headerTitle;
   renderPlayerBadge(document.getElementById('questPlayerBadgeContainer'));
+  // Populate the real question/answers behind the start-gate modal immediately (instead of
+  // only after the "start" click), so the page never has a paint with no actual game content.
+  populateQuestion();
 
   if (state.mode === 'quick') {
     document.getElementById('scoreInfoTieredList').hidden = true;
@@ -142,7 +145,7 @@ async function initQuestPage() {
     document.getElementById('startGateOverlay').hidden = true;
     startGlobalTimer();
     startBackgroundMusic();
-    renderQuestion();
+    startTimer();
   }, { once: true });
 }
 
@@ -276,7 +279,7 @@ function pickNextOrResetIndex() {
   return index;
 }
 
-function renderQuestion() {
+function populateQuestion() {
   state.answered = false;
   renderId += 1;
   const currentRenderId = renderId;
@@ -298,7 +301,10 @@ function renderQuestion() {
     button.addEventListener('click', () => handleAnswerClick(index, button, currentRenderId));
     answersGrid.appendChild(button);
   });
+}
 
+function renderQuestion() {
+  populateQuestion();
   startTimer();
 }
 
